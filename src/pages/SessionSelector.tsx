@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
@@ -6,7 +7,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useToast } from "@/hooks/use-toast";
-import { ArrowLeft } from "lucide-react";
+import { ArrowLeft, GraduationCap } from "lucide-react";
 import { Link } from "react-router-dom";
 
 const SessionSelector = () => {
@@ -72,6 +73,10 @@ const SessionSelector = () => {
                 alt="NIAT Logo" 
                 className="h-8 w-auto"
               />
+              <div>
+                <h1 className="text-2xl font-bold">NIAT Bootcamp Feedback</h1>
+                <p className="text-red-100">Session Selector</p>
+              </div>
             </div>
           </div>
         </div>
@@ -87,11 +92,11 @@ const SessionSelector = () => {
                 Please provide your details and select the session you'd like to give feedback for
               </CardDescription>
             </CardHeader>
-            <CardContent className="p-8 bg-white">
+            <CardContent className="p-8">
               <form onSubmit={handleSubmit} className="space-y-6">
                 {/* Name Field */}
                 <div className="space-y-2">
-                  <Label htmlFor="name" className="text-black font-semibold">
+                  <Label htmlFor="name" className="text-gray-900 font-semibold">
                     Full Name <span className="text-red-900">*</span>
                   </Label>
                   <Input
@@ -107,7 +112,7 @@ const SessionSelector = () => {
 
                 {/* Email Field */}
                 <div className="space-y-2">
-                  <Label htmlFor="email" className="text-black font-semibold">
+                  <Label htmlFor="email" className="text-gray-900 font-semibold">
                     Email Address <span className="text-red-900">*</span>
                   </Label>
                   <Input
@@ -123,7 +128,7 @@ const SessionSelector = () => {
 
                 {/* Bootcamp ID Field */}
                 <div className="space-y-2">
-                  <Label htmlFor="bootcampId" className="text-black font-semibold">
+                  <Label htmlFor="bootcampId" className="text-gray-900 font-semibold">
                     Bootcamp ID <span className="text-red-900">*</span>
                   </Label>
                   <Input
@@ -139,7 +144,7 @@ const SessionSelector = () => {
 
                 {/* Session Selection */}
                 <div className="space-y-2">
-                  <Label htmlFor="session" className="text-black font-semibold">
+                  <Label htmlFor="session" className="text-gray-900 font-semibold">
                     Select Session <span className="text-red-900">*</span>
                   </Label>
                   <Select value={formData.session} onValueChange={(value) => setFormData({ ...formData, session: value })}>
