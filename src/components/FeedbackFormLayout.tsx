@@ -66,22 +66,22 @@ const FeedbackFormLayout = ({ sessionTitle, sessionDescription, children, onSubm
 
   if (isSubmitted) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-red-50 via-orange-50 to-yellow-50 flex items-center justify-center">
-        <Card className="max-w-md mx-auto shadow-xl border-0">
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <Card className="max-w-md mx-auto shadow-xl border-gray-200">
           <CardContent className="p-8 text-center">
             <CheckCircle className="h-16 w-16 text-green-500 mx-auto mb-4" />
-            <h2 className="text-2xl font-bold text-gray-800 mb-2">Thank You!</h2>
-            <p className="text-gray-600 mb-6">
+            <h2 className="text-2xl font-bold text-gray-900 mb-2">Thank You!</h2>
+            <p className="text-gray-700 mb-6">
               Your feedback has been submitted successfully. We appreciate your time and valuable insights.
             </p>
             <div className="space-y-3">
               <Link to="/session-selector">
-                <Button className="w-full bg-red-600 hover:bg-red-700">
+                <Button className="w-full bg-red-900 hover:bg-red-800">
                   Submit Another Feedback
                 </Button>
               </Link>
               <Link to="/">
-                <Button variant="outline" className="w-full border-red-200 text-red-700 hover:bg-red-50">
+                <Button variant="outline" className="w-full border-gray-300 text-gray-700 hover:bg-gray-50">
                   Back to Home
                 </Button>
               </Link>
@@ -93,9 +93,9 @@ const FeedbackFormLayout = ({ sessionTitle, sessionDescription, children, onSubm
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-red-50 via-orange-50 to-yellow-50">
+    <div className="min-h-screen bg-gray-50">
       {/* Header */}
-      <div className="bg-gradient-to-r from-red-700 to-red-800 text-white py-6">
+      <div className="bg-gradient-to-r from-red-900 to-red-800 text-white py-6">
         <div className="container mx-auto px-4">
           <div className="flex items-center justify-between">
             <Link to="/session-selector" className="flex items-center space-x-2 hover:text-red-200 transition-colors">
@@ -121,8 +121,8 @@ const FeedbackFormLayout = ({ sessionTitle, sessionDescription, children, onSubm
       <div className="container mx-auto px-4 py-8">
         <div className="max-w-3xl mx-auto">
           {/* User Info Display */}
-          <Card className="mb-6 shadow-lg border-0 border-red-100">
-            <CardContent className="p-4 bg-gradient-to-r from-red-50 to-orange-50">
+          <Card className="mb-6 shadow-lg border-gray-200">
+            <CardContent className="p-4 bg-gray-100">
               <div className="flex flex-wrap gap-4 text-sm">
                 <div><strong>Name:</strong> {userInfo.name}</div>
                 <div><strong>Email:</strong> {userInfo.email}</div>
@@ -132,8 +132,8 @@ const FeedbackFormLayout = ({ sessionTitle, sessionDescription, children, onSubm
           </Card>
 
           {/* Feedback Form */}
-          <Card className="shadow-xl border-0 border-red-100">
-            <CardHeader className="bg-gradient-to-r from-red-600 to-red-700 text-white rounded-t-lg">
+          <Card className="shadow-xl border-gray-200">
+            <CardHeader className="bg-gradient-to-r from-red-900 to-red-800 text-white rounded-t-lg">
               <CardTitle className="text-2xl">{sessionTitle} Feedback</CardTitle>
               <CardDescription className="text-red-100">
                 {sessionDescription}
@@ -145,7 +145,7 @@ const FeedbackFormLayout = ({ sessionTitle, sessionDescription, children, onSubm
                 
                 <Button 
                   type="submit" 
-                  className="w-full bg-gradient-to-r from-red-600 to-red-700 hover:from-red-700 hover:to-red-800 text-white font-semibold py-3 rounded-lg transition-all duration-300 transform hover:scale-105"
+                  className="w-full bg-gradient-to-r from-red-900 to-red-800 hover:from-red-800 hover:to-red-700 text-white font-semibold py-3 rounded-lg transition-all duration-300 transform hover:scale-105"
                 >
                   Submit Feedback
                 </Button>

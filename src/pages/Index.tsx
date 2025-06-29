@@ -6,9 +6,9 @@ import { GraduationCap, MessageSquare, Users } from "lucide-react";
 
 const Index = () => {
   return (
-    <div className="min-h-screen bg-gradient-to-br from-red-50 via-orange-50 to-yellow-50">
+    <div className="min-h-screen bg-gray-50">
       {/* Header */}
-      <div className="bg-gradient-to-r from-red-700 to-red-800 text-white py-8">
+      <div className="bg-gradient-to-r from-red-900 to-red-800 text-white py-8">
         <div className="container mx-auto px-4">
           <div className="flex items-center justify-center space-x-4">
             <img 
@@ -29,10 +29,10 @@ const Index = () => {
         <div className="max-w-4xl mx-auto">
           {/* Welcome Section */}
           <div className="text-center mb-12">
-            <h2 className="text-3xl font-bold text-gray-800 mb-4">
+            <h2 className="text-3xl font-bold text-gray-900 mb-4">
               Welcome to Our Feedback System
             </h2>
-            <p className="text-lg text-gray-600 max-w-2xl mx-auto">
+            <p className="text-lg text-gray-700 max-w-2xl mx-auto">
               Help us improve our bootcamp sessions by sharing your valuable feedback. 
               Your insights drive our continuous improvement and help create better learning experiences.
             </p>
@@ -41,8 +41,8 @@ const Index = () => {
           {/* Action Cards */}
           <div className="grid md:grid-cols-2 gap-8 mb-12">
             {/* Student Feedback Card */}
-            <Card className="hover:shadow-xl transition-all duration-300 transform hover:scale-105 border-0 shadow-lg">
-              <CardHeader className="bg-gradient-to-r from-red-600 to-red-700 text-white rounded-t-lg">
+            <Card className="hover:shadow-xl transition-all duration-300 transform hover:scale-105 border-gray-200 shadow-lg">
+              <CardHeader className="bg-gradient-to-r from-red-900 to-red-800 text-white rounded-t-lg">
                 <CardTitle className="flex items-center space-x-2">
                   <MessageSquare className="h-6 w-6" />
                   <span>Student Feedback</span>
@@ -52,12 +52,12 @@ const Index = () => {
                 </CardDescription>
               </CardHeader>
               <CardContent className="p-6">
-                <p className="text-gray-600 mb-6">
+                <p className="text-gray-700 mb-6">
                   Provide feedback for your attended sessions, rate your experience, 
                   and help us make our bootcamps even better.
                 </p>
                 <Link to="/session-selector">
-                  <Button className="w-full bg-gradient-to-r from-red-600 to-red-700 hover:from-red-700 hover:to-red-800 text-white font-semibold py-3 rounded-lg transition-all duration-300">
+                  <Button className="w-full bg-gradient-to-r from-red-900 to-red-800 hover:from-red-800 hover:to-red-700 text-white font-semibold py-3 rounded-lg transition-all duration-300">
                     Start Feedback
                   </Button>
                 </Link>
@@ -65,23 +65,23 @@ const Index = () => {
             </Card>
 
             {/* Admin Access Card */}
-            <Card className="hover:shadow-xl transition-all duration-300 transform hover:scale-105 border-0 shadow-lg">
-              <CardHeader className="bg-gradient-to-r from-orange-600 to-red-600 text-white rounded-t-lg">
+            <Card className="hover:shadow-xl transition-all duration-300 transform hover:scale-105 border-gray-200 shadow-lg">
+              <CardHeader className="bg-gradient-to-r from-gray-900 to-black text-white rounded-t-lg">
                 <CardTitle className="flex items-center space-x-2">
                   <Users className="h-6 w-6" />
                   <span>Admin Dashboard</span>
                 </CardTitle>
-                <CardDescription className="text-orange-100">
+                <CardDescription className="text-gray-300">
                   View responses and analytics
                 </CardDescription>
               </CardHeader>
               <CardContent className="p-6">
-                <p className="text-gray-600 mb-6">
+                <p className="text-gray-700 mb-6">
                   Access comprehensive feedback reports, analytics, and manage 
                   the feedback system settings.
                 </p>
                 <Link to="/admin">
-                  <Button className="w-full bg-gradient-to-r from-orange-600 to-red-600 hover:from-orange-700 hover:to-red-700 text-white font-semibold py-3 rounded-lg transition-all duration-300">
+                  <Button className="w-full bg-gradient-to-r from-gray-900 to-black hover:from-gray-800 hover:to-gray-900 text-white font-semibold py-3 rounded-lg transition-all duration-300">
                     Admin Access
                   </Button>
                 </Link>
@@ -90,35 +90,35 @@ const Index = () => {
           </div>
 
           {/* Features Section */}
-          <div className="bg-white rounded-xl shadow-lg p-8 border border-red-100">
-            <h3 className="text-2xl font-bold text-gray-800 mb-6 text-center">
+          <div className="bg-white rounded-xl shadow-lg p-8 border border-gray-200">
+            <h3 className="text-2xl font-bold text-gray-900 mb-6 text-center">
               System Features
             </h3>
             <div className="grid md:grid-cols-3 gap-6">
               <div className="text-center">
                 <div className="bg-red-100 rounded-full w-16 h-16 flex items-center justify-center mx-auto mb-4">
-                  <MessageSquare className="h-8 w-8 text-red-600" />
+                  <MessageSquare className="h-8 w-8 text-red-900" />
                 </div>
-                <h4 className="font-semibold text-gray-800 mb-2">Multi-Session Support</h4>
-                <p className="text-gray-600 text-sm">
+                <h4 className="font-semibold text-gray-900 mb-2">Multi-Session Support</h4>
+                <p className="text-gray-700 text-sm">
                   Feedback forms for all bootcamp sessions including workshops and special events
                 </p>
               </div>
               <div className="text-center">
-                <div className="bg-orange-100 rounded-full w-16 h-16 flex items-center justify-center mx-auto mb-4">
-                  <GraduationCap className="h-8 w-8 text-orange-600" />
+                <div className="bg-gray-100 rounded-full w-16 h-16 flex items-center justify-center mx-auto mb-4">
+                  <GraduationCap className="h-8 w-8 text-gray-900" />
                 </div>
-                <h4 className="font-semibold text-gray-800 mb-2">Mobile Friendly</h4>
-                <p className="text-gray-600 text-sm">
+                <h4 className="font-semibold text-gray-900 mb-2">Mobile Friendly</h4>
+                <p className="text-gray-700 text-sm">
                   Fully responsive design that works perfectly on all devices
                 </p>
               </div>
               <div className="text-center">
-                <div className="bg-yellow-100 rounded-full w-16 h-16 flex items-center justify-center mx-auto mb-4">
-                  <Users className="h-8 w-8 text-yellow-600" />
+                <div className="bg-red-100 rounded-full w-16 h-16 flex items-center justify-center mx-auto mb-4">
+                  <Users className="h-8 w-8 text-red-900" />
                 </div>
-                <h4 className="font-semibold text-gray-800 mb-2">Real-time Analytics</h4>
-                <p className="text-gray-600 text-sm">
+                <h4 className="font-semibold text-gray-900 mb-2">Real-time Analytics</h4>
+                <p className="text-gray-700 text-sm">
                   Instant feedback collection with comprehensive reporting dashboard
                 </p>
               </div>

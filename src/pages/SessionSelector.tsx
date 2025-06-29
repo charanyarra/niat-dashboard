@@ -58,20 +58,24 @@ const SessionSelector = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50">
+    <div className="min-h-screen bg-gray-50">
       {/* Header */}
-      <div className="bg-gradient-to-r from-blue-600 to-indigo-700 text-white py-6">
+      <div className="bg-gradient-to-r from-red-900 to-red-800 text-white py-6">
         <div className="container mx-auto px-4">
           <div className="flex items-center justify-between">
-            <Link to="/" className="flex items-center space-x-2 hover:text-blue-200 transition-colors">
+            <Link to="/" className="flex items-center space-x-2 hover:text-red-200 transition-colors">
               <ArrowLeft className="h-5 w-5" />
               <span>Back to Home</span>
             </Link>
             <div className="flex items-center space-x-3">
-              <GraduationCap className="h-8 w-8" />
+              <img 
+                src="/lovable-uploads/8b444953-4cf5-4245-a883-10795b1e23c3.png" 
+                alt="NIAT Logo" 
+                className="h-8 w-auto"
+              />
               <div>
                 <h1 className="text-2xl font-bold">NIAT Bootcamp Feedback</h1>
-                <p className="text-blue-100">Session Selector</p>
+                <p className="text-red-100">Session Selector</p>
               </div>
             </div>
           </div>
@@ -81,10 +85,10 @@ const SessionSelector = () => {
       {/* Main Content */}
       <div className="container mx-auto px-4 py-8">
         <div className="max-w-2xl mx-auto">
-          <Card className="shadow-xl border-0">
-            <CardHeader className="bg-gradient-to-r from-blue-500 to-indigo-600 text-white rounded-t-lg">
+          <Card className="shadow-xl border-gray-200">
+            <CardHeader className="bg-gradient-to-r from-red-900 to-red-800 text-white rounded-t-lg">
               <CardTitle className="text-2xl">Session Selection</CardTitle>
-              <CardDescription className="text-blue-100">
+              <CardDescription className="text-red-100">
                 Please provide your details and select the session you'd like to give feedback for
               </CardDescription>
             </CardHeader>
@@ -92,8 +96,8 @@ const SessionSelector = () => {
               <form onSubmit={handleSubmit} className="space-y-6">
                 {/* Name Field */}
                 <div className="space-y-2">
-                  <Label htmlFor="name" className="text-gray-700 font-semibold">
-                    Full Name <span className="text-red-500">*</span>
+                  <Label htmlFor="name" className="text-gray-900 font-semibold">
+                    Full Name <span className="text-red-900">*</span>
                   </Label>
                   <Input
                     id="name"
@@ -101,15 +105,15 @@ const SessionSelector = () => {
                     placeholder="Enter your full name"
                     value={formData.name}
                     onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                    className="border-gray-300 focus:border-blue-500 focus:ring-blue-500"
+                    className="border-gray-300 focus:border-red-900 focus:ring-red-900"
                     required
                   />
                 </div>
 
                 {/* Email Field */}
                 <div className="space-y-2">
-                  <Label htmlFor="email" className="text-gray-700 font-semibold">
-                    Email Address <span className="text-red-500">*</span>
+                  <Label htmlFor="email" className="text-gray-900 font-semibold">
+                    Email Address <span className="text-red-900">*</span>
                   </Label>
                   <Input
                     id="email"
@@ -117,15 +121,15 @@ const SessionSelector = () => {
                     placeholder="Enter your email address"
                     value={formData.email}
                     onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                    className="border-gray-300 focus:border-blue-500 focus:ring-blue-500"
+                    className="border-gray-300 focus:border-red-900 focus:ring-red-900"
                     required
                   />
                 </div>
 
                 {/* Bootcamp ID Field */}
                 <div className="space-y-2">
-                  <Label htmlFor="bootcampId" className="text-gray-700 font-semibold">
-                    Bootcamp ID <span className="text-red-500">*</span>
+                  <Label htmlFor="bootcampId" className="text-gray-900 font-semibold">
+                    Bootcamp ID <span className="text-red-900">*</span>
                   </Label>
                   <Input
                     id="bootcampId"
@@ -133,18 +137,18 @@ const SessionSelector = () => {
                     placeholder="Enter your bootcamp ID"
                     value={formData.bootcampId}
                     onChange={(e) => setFormData({ ...formData, bootcampId: e.target.value })}
-                    className="border-gray-300 focus:border-blue-500 focus:ring-blue-500"
+                    className="border-gray-300 focus:border-red-900 focus:ring-red-900"
                     required
                   />
                 </div>
 
                 {/* Session Selection */}
                 <div className="space-y-2">
-                  <Label htmlFor="session" className="text-gray-700 font-semibold">
-                    Select Session <span className="text-red-500">*</span>
+                  <Label htmlFor="session" className="text-gray-900 font-semibold">
+                    Select Session <span className="text-red-900">*</span>
                   </Label>
                   <Select value={formData.session} onValueChange={(value) => setFormData({ ...formData, session: value })}>
-                    <SelectTrigger className="border-gray-300 focus:border-blue-500 focus:ring-blue-500">
+                    <SelectTrigger className="border-gray-300 focus:border-red-900 focus:ring-red-900">
                       <SelectValue placeholder="Choose the session you attended" />
                     </SelectTrigger>
                     <SelectContent>
@@ -160,7 +164,7 @@ const SessionSelector = () => {
                 {/* Submit Button */}
                 <Button 
                   type="submit" 
-                  className="w-full bg-gradient-to-r from-blue-500 to-indigo-600 hover:from-blue-600 hover:to-indigo-700 text-white font-semibold py-3 rounded-lg transition-all duration-300 transform hover:scale-105"
+                  className="w-full bg-gradient-to-r from-red-900 to-red-800 hover:from-red-800 hover:to-red-700 text-white font-semibold py-3 rounded-lg transition-all duration-300 transform hover:scale-105"
                 >
                   Proceed to Feedback Form
                 </Button>
