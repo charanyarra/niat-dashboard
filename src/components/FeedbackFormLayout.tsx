@@ -66,7 +66,7 @@ const FeedbackFormLayout = ({ sessionTitle, sessionDescription, children, onSubm
 
   if (isSubmitted) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-green-50 via-blue-50 to-indigo-50 flex items-center justify-center">
+      <div className="min-h-screen bg-gradient-to-br from-red-50 via-orange-50 to-yellow-50 flex items-center justify-center">
         <Card className="max-w-md mx-auto shadow-xl border-0">
           <CardContent className="p-8 text-center">
             <CheckCircle className="h-16 w-16 text-green-500 mx-auto mb-4" />
@@ -76,12 +76,12 @@ const FeedbackFormLayout = ({ sessionTitle, sessionDescription, children, onSubm
             </p>
             <div className="space-y-3">
               <Link to="/session-selector">
-                <Button className="w-full bg-blue-500 hover:bg-blue-600">
+                <Button className="w-full bg-red-600 hover:bg-red-700">
                   Submit Another Feedback
                 </Button>
               </Link>
               <Link to="/">
-                <Button variant="outline" className="w-full">
+                <Button variant="outline" className="w-full border-red-200 text-red-700 hover:bg-red-50">
                   Back to Home
                 </Button>
               </Link>
@@ -93,20 +93,24 @@ const FeedbackFormLayout = ({ sessionTitle, sessionDescription, children, onSubm
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50">
+    <div className="min-h-screen bg-gradient-to-br from-red-50 via-orange-50 to-yellow-50">
       {/* Header */}
-      <div className="bg-gradient-to-r from-blue-600 to-indigo-700 text-white py-6">
+      <div className="bg-gradient-to-r from-red-700 to-red-800 text-white py-6">
         <div className="container mx-auto px-4">
           <div className="flex items-center justify-between">
-            <Link to="/session-selector" className="flex items-center space-x-2 hover:text-blue-200 transition-colors">
+            <Link to="/session-selector" className="flex items-center space-x-2 hover:text-red-200 transition-colors">
               <ArrowLeft className="h-5 w-5" />
               <span>Back to Session Selector</span>
             </Link>
             <div className="flex items-center space-x-3">
-              <GraduationCap className="h-8 w-8" />
+              <img 
+                src="/lovable-uploads/8b444953-4cf5-4245-a883-10795b1e23c3.png" 
+                alt="NIAT Logo" 
+                className="h-12 w-auto"
+              />
               <div>
                 <h1 className="text-2xl font-bold">{sessionTitle}</h1>
-                <p className="text-blue-100">Feedback Form</p>
+                <p className="text-red-100">Feedback Form</p>
               </div>
             </div>
           </div>
@@ -117,8 +121,8 @@ const FeedbackFormLayout = ({ sessionTitle, sessionDescription, children, onSubm
       <div className="container mx-auto px-4 py-8">
         <div className="max-w-3xl mx-auto">
           {/* User Info Display */}
-          <Card className="mb-6 shadow-lg border-0">
-            <CardContent className="p-4 bg-gradient-to-r from-gray-50 to-gray-100">
+          <Card className="mb-6 shadow-lg border-0 border-red-100">
+            <CardContent className="p-4 bg-gradient-to-r from-red-50 to-orange-50">
               <div className="flex flex-wrap gap-4 text-sm">
                 <div><strong>Name:</strong> {userInfo.name}</div>
                 <div><strong>Email:</strong> {userInfo.email}</div>
@@ -128,10 +132,10 @@ const FeedbackFormLayout = ({ sessionTitle, sessionDescription, children, onSubm
           </Card>
 
           {/* Feedback Form */}
-          <Card className="shadow-xl border-0">
-            <CardHeader className="bg-gradient-to-r from-blue-500 to-indigo-600 text-white rounded-t-lg">
+          <Card className="shadow-xl border-0 border-red-100">
+            <CardHeader className="bg-gradient-to-r from-red-600 to-red-700 text-white rounded-t-lg">
               <CardTitle className="text-2xl">{sessionTitle} Feedback</CardTitle>
-              <CardDescription className="text-blue-100">
+              <CardDescription className="text-red-100">
                 {sessionDescription}
               </CardDescription>
             </CardHeader>
@@ -141,7 +145,7 @@ const FeedbackFormLayout = ({ sessionTitle, sessionDescription, children, onSubm
                 
                 <Button 
                   type="submit" 
-                  className="w-full bg-gradient-to-r from-blue-500 to-indigo-600 hover:from-blue-600 hover:to-indigo-700 text-white font-semibold py-3 rounded-lg transition-all duration-300 transform hover:scale-105"
+                  className="w-full bg-gradient-to-r from-red-600 to-red-700 hover:from-red-700 hover:to-red-800 text-white font-semibold py-3 rounded-lg transition-all duration-300 transform hover:scale-105"
                 >
                   Submit Feedback
                 </Button>
