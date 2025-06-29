@@ -1,13 +1,9 @@
-
 import { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/hooks/use-toast";
-import { ArrowLeft, GraduationCap, CheckCircle } from "lucide-react";
+import { ArrowLeft, CheckCircle } from "lucide-react";
 
 interface UserInfo {
   name: string;
@@ -68,20 +64,20 @@ const FeedbackFormLayout = ({ sessionTitle, sessionDescription, children, onSubm
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
         <Card className="max-w-md mx-auto shadow-xl border-gray-200">
-          <CardContent className="p-8 text-center">
+          <CardContent className="p-8 text-center bg-white">
             <CheckCircle className="h-16 w-16 text-green-500 mx-auto mb-4" />
-            <h2 className="text-2xl font-bold text-gray-900 mb-2">Thank You!</h2>
-            <p className="text-gray-700 mb-6">
+            <h2 className="text-2xl font-bold text-black mb-2">Thank You!</h2>
+            <p className="text-black mb-6">
               Your feedback has been submitted successfully. We appreciate your time and valuable insights.
             </p>
             <div className="space-y-3">
               <Link to="/session-selector">
-                <Button className="w-full bg-red-900 hover:bg-red-800">
+                <Button className="w-full bg-red-900 hover:bg-red-800 text-white">
                   Submit Another Feedback
                 </Button>
               </Link>
               <Link to="/">
-                <Button variant="outline" className="w-full border-gray-300 text-gray-700 hover:bg-gray-50">
+                <Button variant="outline" className="w-full border-gray-300 text-black hover:bg-gray-50">
                   Back to Home
                 </Button>
               </Link>
@@ -108,10 +104,6 @@ const FeedbackFormLayout = ({ sessionTitle, sessionDescription, children, onSubm
                 alt="NIAT Logo" 
                 className="h-12 w-auto"
               />
-              <div>
-                <h1 className="text-2xl font-bold">{sessionTitle}</h1>
-                <p className="text-red-100">Feedback Form</p>
-              </div>
             </div>
           </div>
         </div>
@@ -124,9 +116,9 @@ const FeedbackFormLayout = ({ sessionTitle, sessionDescription, children, onSubm
           <Card className="mb-6 shadow-lg border-gray-200">
             <CardContent className="p-4 bg-gray-100">
               <div className="flex flex-wrap gap-4 text-sm">
-                <div><strong>Name:</strong> {userInfo.name}</div>
-                <div><strong>Email:</strong> {userInfo.email}</div>
-                <div><strong>Bootcamp ID:</strong> {userInfo.bootcampId}</div>
+                <div className="text-black"><strong>Name:</strong> {userInfo.name}</div>
+                <div className="text-black"><strong>Email:</strong> {userInfo.email}</div>
+                <div className="text-black"><strong>Bootcamp ID:</strong> {userInfo.bootcampId}</div>
               </div>
             </CardContent>
           </Card>
@@ -139,7 +131,7 @@ const FeedbackFormLayout = ({ sessionTitle, sessionDescription, children, onSubm
                 {sessionDescription}
               </CardDescription>
             </CardHeader>
-            <CardContent className="p-8">
+            <CardContent className="p-8 bg-white">
               <form onSubmit={handleSubmit} className="space-y-6">
                 {children}
                 
