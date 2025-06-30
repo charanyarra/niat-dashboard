@@ -48,21 +48,6 @@ const AdminDashboard = () => {
     exportToCSV
   } = useFeedbackData();
 
-  // List of all available feedback forms
-  const availableForms = [
-    { name: "Speed Math", path: "/feedback/speed-math", status: "Available" },
-    { name: "Tribe Huddle", path: "/feedback/tribe-huddle", status: "Available" },
-    { name: "Kaizen", path: "/feedback/kaizen", status: "Available" },
-    { name: "Personal Branding", path: "/feedback/personal-branding", status: "Available" },
-    { name: "Community Building", path: "/feedback/community-building", status: "Available" },
-    { name: "Gen AI", path: "/feedback/gen-ai", status: "Available" },
-    { name: "Gen AI Video", path: "/feedback/gen-ai-video", status: "Available" },
-    { name: "IoT Workshop", path: "/feedback/iot-workshop", status: "Available" },
-    { name: "LinkedIn Workshop", path: "/feedback/linkedin-workshop", status: "Available" },
-    { name: "Drone Workshop", path: "/feedback/drone-workshop", status: "Available" },
-    { name: "Tribeathon", path: "/feedback/tribeathon", status: "Available" }
-  ];
-
   const handleLogin = (e: React.FormEvent) => {
     e.preventDefault();
     if (password === "Admin123") {
@@ -348,36 +333,6 @@ const AdminDashboard = () => {
           </div>
         ) : (
           <>
-            {/* Available Forms Section */}
-            <Card className="shadow-lg border-0 mb-6">
-              <CardHeader className="bg-gradient-to-r from-blue-900 to-blue-800 text-white rounded-t-lg">
-                <CardTitle className="text-xl">Available Feedback Forms</CardTitle>
-                <CardDescription className="text-blue-100">
-                  All feedback forms available in the system
-                </CardDescription>
-              </CardHeader>
-              <CardContent className="p-6 bg-card">
-                <div className="grid md:grid-cols-3 lg:grid-cols-4 gap-4">
-                  {availableForms.map((form, index) => (
-                    <div key={index} className="bg-gray-50 dark:bg-gray-800 rounded-lg p-4 border">
-                      <h4 className="font-semibold text-foreground mb-2">{form.name}</h4>
-                      <div className="flex items-center justify-between">
-                        <span className="text-xs bg-green-100 dark:bg-green-900 text-green-800 dark:text-green-200 px-2 py-1 rounded-full">
-                          {form.status}
-                        </span>
-                        <Link 
-                          to={form.path}
-                          className="text-xs text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300"
-                        >
-                          View Form
-                        </Link>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </CardContent>
-            </Card>
-
             {/* Statistics Cards */}
             <div className="grid md:grid-cols-4 gap-6 mb-8">
               <Card className="border-0 shadow-lg">
@@ -420,8 +375,10 @@ const AdminDashboard = () => {
                 <CardContent className="p-6 bg-card">
                   <div className="flex items-center justify-between">
                     <div>
-                      <p className="text-sm text-muted-foreground">Available Forms</p>
-                      <p className="text-3xl font-bold text-red-900">{availableForms.length}</p>
+                      <p className="text-sm text-muted-foreground">Avg. Questions</p>
+                      <p className="text-3xl font-bold text-red-900">
+                        {sessions.length > 0 ? Math.round(sessions.reduce((acc, s) => acc + s.questions.length, 0) / sessions.length) : 0}
+                      </p>
                     </div>
                     <FileText className="h-10 w-10 text-red-900" />
                   </div>
@@ -484,7 +441,7 @@ const AdminDashboard = () => {
                 <div className="overflow-x-auto">
                   <Table>
                     <TableHeader>
-                      <TableRow className="bg-gray-50 dark:bg-gray-800">
+                      <TableRow className="bg-gray-50">
                         <TableHead className="w-12">
                           <input
                             type="checkbox"
@@ -498,12 +455,12 @@ const AdminDashboard = () => {
                             checked={selectedSessions.length === filteredSessions.length && filteredSessions.length > 0}
                           />
                         </TableHead>
-                        <TableHead className="font-semibold">Session Name</TableHead>
-                        <TableHead className="font-semibold">Status</TableHead>
-                        <TableHead className="font-semibold">Questions</TableHead>
-                        <TableHead className="font-semibold">Responses</TableHead>
-                        <TableHead className="font-semibold">Created</TableHead>
-                        <TableHead className="font-semibold">Actions</TableHead>
+                        <TableHead className="font-semibold text-black">Session Name</TableHead>
+                        <TableHead className="font-semibold text-black">Status</TableHead>
+                        <TableHead className="font-semibold text-black">Questions</TableHead>
+                        <TableHead className="font-semibold text-black">Responses</TableHead>
+                        <TableHead className="font-semibold text-black">Created</TableHead>
+                        <TableHead className="font-semibold text-black">Actions</TableHead>
                       </TableRow>
                     </TableHeader>
                     <TableBody>
@@ -521,7 +478,7 @@ const AdminDashboard = () => {
                         </TableRow>
                       ) : (
                         filteredSessions.map((session) => (
-                          <TableRow key={session.id} className="hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors">
+                          <TableRow key={session.id} className="hover:bg-gray-50 transition-colors">
                             <TableCell>
                               <input
                                 type="checkbox"
@@ -529,23 +486,23 @@ const AdminDashboard = () => {
                                 onChange={() => toggleSessionSelection(session.id)}
                               />
                             </TableCell>
-                            <TableCell className="font-medium">{session.title}</TableCell>
+                            <TableCell className="font-medium text-black">{session.title}</TableCell>
                             <TableCell>
                               <span className={`px-2 py-1 rounded-full text-xs font-medium ${
                                 session.is_active 
-                                  ? 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200' 
-                                  : 'bg-gray-100 text-gray-800 dark:bg-gray-800 dark:text-gray-200'
+                                  ? 'bg-green-100 text-green-800' 
+                                  : 'bg-gray-100 text-gray-800'
                               }`}>
                                 {session.is_active ? 'Active' : 'Inactive'}
                               </span>
                             </TableCell>
-                            <TableCell>{session.questions.length}</TableCell>
+                            <TableCell className="text-black">{session.questions.length}</TableCell>
                             <TableCell>
-                              <span className="bg-red-100 text-red-900 dark:bg-red-900 dark:text-red-200 px-3 py-1 rounded-full text-sm font-medium">
+                              <span className="bg-red-100 text-red-900 px-3 py-1 rounded-full text-sm font-medium">
                                 {getResponseCount(session.id)}
                               </span>
                             </TableCell>
-                            <TableCell>
+                            <TableCell className="text-black">
                               {new Date(session.created_at).toLocaleDateString()}
                             </TableCell>
                             <TableCell>
@@ -560,7 +517,7 @@ const AdminDashboard = () => {
                                 <Button 
                                   size="sm" 
                                   variant="outline"
-                                  className="border-red-900 text-red-900 hover:bg-red-50 dark:border-red-400 dark:text-red-400 dark:hover:bg-red-950"
+                                  className="border-red-900 text-red-900 hover:bg-red-50"
                                   onClick={() => handleEdit(session)}
                                 >
                                   <Edit className="h-4 w-4" />
@@ -568,7 +525,7 @@ const AdminDashboard = () => {
                                 <Button 
                                   size="sm" 
                                   variant="outline"
-                                  className="border-blue-600 text-blue-600 hover:bg-blue-50 dark:border-blue-400 dark:text-blue-400 dark:hover:bg-blue-950"
+                                  className="border-blue-600 text-blue-600 hover:bg-blue-50"
                                   onClick={() => setShowShareManager(session)}
                                 >
                                   <Share2 className="h-4 w-4" />
@@ -576,7 +533,7 @@ const AdminDashboard = () => {
                                 <Button 
                                   size="sm" 
                                   variant="outline"
-                                  className="border-red-900 text-red-900 hover:bg-red-50 dark:border-red-400 dark:text-red-400 dark:hover:bg-red-950"
+                                  className="border-red-900 text-red-900 hover:bg-red-50"
                                   onClick={() => handleExport(session.id, 'CSV')}
                                 >
                                   <Download className="h-4 w-4" />
@@ -586,7 +543,7 @@ const AdminDashboard = () => {
                                     <Button 
                                       size="sm" 
                                       variant="outline"
-                                      className="border-red-600 text-red-600 hover:bg-red-50 dark:border-red-400 dark:text-red-400 dark:hover:bg-red-950"
+                                      className="border-red-600 text-red-600 hover:bg-red-50"
                                     >
                                       <Trash2 className="h-4 w-4" />
                                     </Button>
@@ -623,7 +580,7 @@ const AdminDashboard = () => {
             {/* Share Manager Modal */}
             {showShareManager && (
               <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50" onClick={() => setShowShareManager(null)}>
-                <div className="bg-background rounded-lg max-w-2xl w-full mx-4" onClick={(e) => e.stopPropagation()}>
+                <div className="bg-white rounded-lg max-w-2xl w-full mx-4" onClick={(e) => e.stopPropagation()}>
                   <div className="p-6">
                     <ShareableLinkManager session={showShareManager} />
                     <div className="flex justify-end mt-4">
@@ -639,29 +596,29 @@ const AdminDashboard = () => {
             {/* View Session Modal */}
             {viewingSession && (
               <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50" onClick={() => setViewingSession(null)}>
-                <div className="bg-background rounded-lg max-w-6xl w-full mx-4 max-h-[90vh] overflow-y-auto" onClick={(e) => e.stopPropagation()}>
+                <div className="bg-white rounded-lg max-w-6xl w-full mx-4 max-h-[90vh] overflow-y-auto" onClick={(e) => e.stopPropagation()}>
                   <div className="bg-gradient-to-r from-red-900 to-red-800 text-white p-6 rounded-t-lg">
                     <h2 className="text-2xl font-bold">{viewingSession.title} - Responses</h2>
                     <p className="text-red-100">View and analyze feedback responses</p>
                   </div>
                   <div className="p-6">
                     <div className="grid md:grid-cols-3 gap-4 mb-6">
-                      <div className="bg-gray-50 dark:bg-gray-800 p-4 rounded-lg">
-                        <h3 className="font-semibold">Total Responses</h3>
+                      <div className="bg-gray-50 p-4 rounded-lg">
+                        <h3 className="font-semibold text-black">Total Responses</h3>
                         <p className="text-2xl font-bold text-red-900">{getResponseCount(viewingSession.id)}</p>
                       </div>
-                      <div className="bg-gray-50 dark:bg-gray-800 p-4 rounded-lg">
-                        <h3 className="font-semibold">Questions</h3>
+                      <div className="bg-gray-50 p-4 rounded-lg">
+                        <h3 className="font-semibold text-black">Questions</h3>
                         <p className="text-2xl font-bold text-red-900">{viewingSession.questions.length}</p>
                       </div>
-                      <div className="bg-gray-50 dark:bg-gray-800 p-4 rounded-lg">
-                        <h3 className="font-semibold">Avg. Rating</h3>
+                      <div className="bg-gray-50 p-4 rounded-lg">
+                        <h3 className="font-semibold text-black">Avg. Rating</h3>
                         <p className="text-2xl font-bold text-red-900">★ {getAverageRating(viewingSession.id)}</p>
                       </div>
                     </div>
 
                     <div className="mb-6">
-                      <h3 className="text-lg font-semibold mb-4">Recent Responses</h3>
+                      <h3 className="text-lg font-semibold text-black mb-4">Recent Responses</h3>
                       <div className="space-y-4 max-h-64 overflow-y-auto">
                         {responses
                           .filter(r => r.session_id === viewingSession.id)
@@ -670,10 +627,10 @@ const AdminDashboard = () => {
                             <div key={response.id} className="border rounded-lg p-4">
                               <div className="flex justify-between items-start mb-2">
                                 <div>
-                                  <p className="font-medium">{response.user_name}</p>
-                                  <p className="text-sm text-muted-foreground">{response.user_email} • {response.bootcamp_id}</p>
+                                  <p className="font-medium text-black">{response.user_name}</p>
+                                  <p className="text-sm text-gray-600">{response.user_email} • {response.bootcamp_id}</p>
                                 </div>
-                                <p className="text-sm text-muted-foreground">
+                                <p className="text-sm text-gray-500">
                                   {new Date(response.submitted_at).toLocaleString()}
                                 </p>
                               </div>
@@ -682,8 +639,8 @@ const AdminDashboard = () => {
                                   const question = viewingSession.questions.find((q: any) => q.id === questionId);
                                   return (
                                     <div key={questionId} className="mb-2">
-                                      <p className="text-sm font-medium text-muted-foreground">{question?.question}</p>
-                                      <p className="text-sm">{String(answer)}</p>
+                                      <p className="text-sm font-medium text-gray-700">{question?.question}</p>
+                                      <p className="text-sm text-black">{String(answer)}</p>
                                     </div>
                                   );
                                 })}
