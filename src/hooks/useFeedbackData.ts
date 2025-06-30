@@ -1,6 +1,10 @@
 
 import { useState, useEffect } from 'react';
 import { supabase } from '@/integrations/supabase/client';
+import { Database } from '@/integrations/supabase/types';
+
+type DbFeedbackSession = Database['public']['Tables']['feedback_sessions']['Row'];
+type DbFeedbackResponse = Database['public']['Tables']['feedback_responses']['Row'];
 
 export interface FeedbackSession {
   id: string;
@@ -36,7 +40,20 @@ export const useFeedbackData = () => {
         .order('created_at', { ascending: false });
 
       if (error) throw error;
-      setSessions(data || []);
+      
+      // Transform the data to match our interface
+      const transformedSessions: FeedbackSession[] = (data || []).map((session: DbFeedbackSession) => ({
+        id: session.id,
+        title: session.title,
+        description: session.description || '',
+        questions: Array.isArray(session.questions) ? session.questions : [],
+        is_active: session.is_active || false,
+        share_link: session.share_link || '',
+        created_at: session.created_at || '',
+        updated_at: session.updated_at || ''
+      }));
+      
+      setSessions(transformedSessions);
     } catch (error) {
       console.error('Error fetching sessions:', error);
     }
@@ -55,7 +72,19 @@ export const useFeedbackData = () => {
 
       const { data, error } = await query;
       if (error) throw error;
-      setResponses(data || []);
+      
+      // Transform the data to match our interface
+      const transformedResponses: FeedbackResponse[] = (data || []).map((response: DbFeedbackResponse) => ({
+        id: response.id,
+        session_id: response.session_id || '',
+        user_name: response.user_name,
+        user_email: response.user_email,
+        bootcamp_id: response.bootcamp_id,
+        responses: typeof response.responses === 'object' && response.responses !== null ? response.responses as Record<string, any> : {},
+        submitted_at: response.submitted_at || ''
+      }));
+      
+      setResponses(transformedResponses);
     } catch (error) {
       console.error('Error fetching responses:', error);
     }
@@ -66,7 +95,13 @@ export const useFeedbackData = () => {
       const shareLink = `${sessionData.title?.toLowerCase().replace(/\s+/g, '-')}-${Date.now()}`;
       const { data, error } = await supabase
         .from('feedback_sessions')
-        .insert([{ ...sessionData, share_link: shareLink }])
+        .insert([{ 
+          title: sessionData.title || '',
+          description: sessionData.description,
+          questions: sessionData.questions || [],
+          is_active: sessionData.is_active,
+          share_link: shareLink 
+        }])
         .select()
         .single();
 
@@ -83,7 +118,13 @@ export const useFeedbackData = () => {
     try {
       const { error } = await supabase
         .from('feedback_sessions')
-        .update({ ...updates, updated_at: new Date().toISOString() })
+        .update({ 
+          title: updates.title,
+          description: updates.description,
+          questions: updates.questions,
+          is_active: updates.is_active,
+          updated_at: new Date().toISOString() 
+        })
         .eq('id', id);
 
       if (error) throw error;
