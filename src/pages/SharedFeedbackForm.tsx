@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
@@ -11,6 +10,7 @@ import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
 import { CheckCircle, ArrowLeft } from 'lucide-react';
 import { Link } from 'react-router-dom';
+import ThemeToggle from '@/components/ThemeToggle';
 
 const SharedFeedbackForm = () => {
   const { shareLink } = useParams();
@@ -60,6 +60,33 @@ const SharedFeedbackForm = () => {
       fetchSession();
     }
   }, [shareLink, navigate, toast]);
+
+  // Add function to download form as PDF/text
+  const downloadFormAsText = () => {
+    if (!session) return;
+    
+    const formContent = `
+FEEDBACK FORM: ${session.title}
+Description: ${session.description}
+Generated on: ${new Date().toLocaleString()}
+
+QUESTIONS:
+${session.questions.map((q: any, index: number) => 
+  `${index + 1}. ${q.question} (${q.type}${q.required ? ' - Required' : ''})`
+).join('\n')}
+
+------
+This form can be accessed at: ${window.location.origin}/feedback/${session.share_link}
+    `.trim();
+
+    const blob = new Blob([formContent], { type: 'text/plain' });
+    const url = window.URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `${session.title.toLowerCase().replace(/\s+/g, '-')}-form.txt`;
+    a.click();
+    window.URL.revokeObjectURL(url);
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -112,10 +139,10 @@ const SharedFeedbackForm = () => {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+      <div className="min-h-screen bg-background flex items-center justify-center">
         <div className="text-center">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-red-900 mx-auto mb-4"></div>
-          <p className="text-gray-600">Loading feedback form...</p>
+          <p className="text-muted-foreground">Loading feedback form...</p>
         </div>
       </div>
     );
@@ -123,11 +150,11 @@ const SharedFeedbackForm = () => {
 
   if (!session) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+      <div className="min-h-screen bg-background flex items-center justify-center">
         <Card className="max-w-md mx-auto">
           <CardContent className="p-6 text-center">
             <h2 className="text-xl font-bold text-red-900 mb-2">Form Not Found</h2>
-            <p className="text-gray-600 mb-4">
+            <p className="text-muted-foreground mb-4">
               The feedback form you're looking for doesn't exist or has been disabled.
             </p>
             <Link to="/">
@@ -143,12 +170,12 @@ const SharedFeedbackForm = () => {
 
   if (submitted) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-        <Card className="max-w-md mx-auto shadow-xl border-gray-200">
-          <CardContent className="p-8 text-center bg-white">
+      <div className="min-h-screen bg-background flex items-center justify-center">
+        <Card className="max-w-md mx-auto shadow-xl border-border">
+          <CardContent className="p-8 text-center bg-card">
             <CheckCircle className="h-16 w-16 text-green-500 mx-auto mb-4" />
-            <h2 className="text-2xl font-bold text-black mb-2">Thank You!</h2>
-            <p className="text-black mb-6">
+            <h2 className="text-2xl font-bold text-foreground mb-2">Thank You!</h2>
+            <p className="text-foreground mb-6">
               Your feedback has been submitted successfully. We appreciate your time and valuable insights.
             </p>
             <Link to="/">
@@ -163,7 +190,7 @@ const SharedFeedbackForm = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-background">
       {/* Header */}
       <div className="bg-gradient-to-r from-red-900 to-red-800 text-white py-6">
         <div className="container mx-auto px-4">
@@ -173,6 +200,15 @@ const SharedFeedbackForm = () => {
               <span>Back to Home</span>
             </Link>
             <div className="flex items-center space-x-3">
+              <ThemeToggle />
+              <Button
+                onClick={downloadFormAsText}
+                variant="outline"
+                size="sm"
+                className="text-red-900 border-white hover:bg-white/10"
+              >
+                Download Form
+              </Button>
               <img 
                 src="/lovable-uploads/8b444953-4cf5-4245-a883-10795b1e23c3.png" 
                 alt="NIAT Logo" 
@@ -187,19 +223,19 @@ const SharedFeedbackForm = () => {
       <div className="container mx-auto px-4 py-8">
         <div className="max-w-3xl mx-auto">
           {/* Feedback Form */}
-          <Card className="shadow-xl border-gray-200">
+          <Card className="shadow-xl border-border">
             <CardHeader className="bg-gradient-to-r from-red-900 to-red-800 text-white rounded-t-lg">
               <CardTitle className="text-2xl">{session.title}</CardTitle>
               <CardDescription className="text-red-100">
                 {session.description}
               </CardDescription>
             </CardHeader>
-            <CardContent className="p-8 bg-white">
+            <CardContent className="p-8 bg-card">
               <form onSubmit={handleSubmit} className="space-y-6">
                 {/* User Info Section */}
-                <div className="grid md:grid-cols-3 gap-4 p-4 bg-gray-50 rounded-lg">
+                <div className="grid md:grid-cols-3 gap-4 p-4 bg-muted rounded-lg">
                   <div className="space-y-2">
-                    <Label htmlFor="name" className="text-gray-700 font-semibold">
+                    <Label htmlFor="name" className="text-foreground font-semibold">
                       Your Name <span className="text-red-500">*</span>
                     </Label>
                     <Input
@@ -211,7 +247,7 @@ const SharedFeedbackForm = () => {
                     />
                   </div>
                   <div className="space-y-2">
-                    <Label htmlFor="email" className="text-gray-700 font-semibold">
+                    <Label htmlFor="email" className="text-foreground font-semibold">
                       Email Address <span className="text-red-500">*</span>
                     </Label>
                     <Input
@@ -224,7 +260,7 @@ const SharedFeedbackForm = () => {
                     />
                   </div>
                   <div className="space-y-2">
-                    <Label htmlFor="bootcampId" className="text-gray-700 font-semibold">
+                    <Label htmlFor="bootcampId" className="text-foreground font-semibold">
                       Bootcamp ID <span className="text-red-500">*</span>
                     </Label>
                     <Input
@@ -240,7 +276,7 @@ const SharedFeedbackForm = () => {
                 {/* Dynamic Questions */}
                 {session.questions.map((question: any, index: number) => (
                   <div key={question.id} className="space-y-3">
-                    <Label className="text-gray-700 font-semibold">
+                    <Label className="text-foreground font-semibold">
                       {question.question} {question.required && <span className="text-red-500">*</span>}
                     </Label>
                     

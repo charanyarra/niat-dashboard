@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -22,6 +21,8 @@ import {
 import { useFeedbackData } from "@/hooks/useFeedbackData";
 import SessionEditor from "@/components/SessionEditor";
 import ShareableLinkManager from "@/components/ShareableLinkManager";
+import ThemeToggle from "@/components/ThemeToggle";
+import AnalyticsDashboard from "@/components/AnalyticsDashboard";
 
 const AdminDashboard = () => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
@@ -32,6 +33,7 @@ const AdminDashboard = () => {
   const [editingSession, setEditingSession] = useState<any>(null);
   const [showEditor, setShowEditor] = useState(false);
   const [showShareManager, setShowShareManager] = useState<any>(null);
+  const [showAnalytics, setShowAnalytics] = useState(false);
   const { toast } = useToast();
 
   const {
@@ -187,7 +189,7 @@ const AdminDashboard = () => {
 
   if (!isAuthenticated) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+      <div className="min-h-screen bg-background flex items-center justify-center">
         <div className="w-full max-w-md">
           <Card className="shadow-xl border-0">
             <CardHeader className="bg-gradient-to-r from-red-900 to-red-800 text-white rounded-t-lg text-center">
@@ -199,10 +201,10 @@ const AdminDashboard = () => {
                 Enter the admin password to continue
               </CardDescription>
             </CardHeader>
-            <CardContent className="p-8 bg-white">
+            <CardContent className="p-8 bg-card">
               <form onSubmit={handleLogin} className="space-y-6">
                 <div className="space-y-2">
-                  <Label htmlFor="password" className="text-black font-semibold">
+                  <Label htmlFor="password" className="text-foreground font-semibold">
                     Admin Password
                   </Label>
                   <Input
@@ -211,7 +213,7 @@ const AdminDashboard = () => {
                     placeholder="Enter admin password"
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
-                    className="border-gray-300 focus:border-red-900 focus:ring-red-900"
+                    className="border-input focus:border-primary focus:ring-primary"
                     required
                   />
                 </div>
@@ -237,7 +239,7 @@ const AdminDashboard = () => {
 
   if (showEditor) {
     return (
-      <div className="min-h-screen bg-gray-50">
+      <div className="min-h-screen bg-background">
         <div className="bg-gradient-to-r from-red-900 to-red-800 text-white py-6">
           <div className="container mx-auto px-4">
             <div className="flex items-center justify-between">
@@ -252,11 +254,14 @@ const AdminDashboard = () => {
                 <ArrowLeft className="h-4 w-4 mr-2" />
                 Back to Dashboard
               </Button>
-              <img 
-                src="/lovable-uploads/8b444953-4cf5-4245-a883-10795b1e23c3.png" 
-                alt="NIAT Logo" 
-                className="h-8 w-auto"
-              />
+              <div className="flex items-center space-x-3">
+                <ThemeToggle />
+                <img 
+                  src="/lovable-uploads/8b444953-4cf5-4245-a883-10795b1e23c3.png" 
+                  alt="NIAT Logo" 
+                  className="h-8 w-auto"
+                />
+              </div>
             </div>
           </div>
         </div>
@@ -273,7 +278,7 @@ const AdminDashboard = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-background">
       {/* Header */}
       <div className="bg-gradient-to-r from-red-900 to-red-800 text-white py-6">
         <div className="container mx-auto px-4">
@@ -283,355 +288,390 @@ const AdminDashboard = () => {
               <span>Back to Home</span>
             </Link>
             <div className="flex items-center space-x-3">
+              <ThemeToggle />
               <img 
                 src="/lovable-uploads/8b444953-4cf5-4245-a883-10795b1e23c3.png" 
                 alt="NIAT Logo" 
                 className="h-8 w-auto"
               />
             </div>
-            <Button 
-              onClick={() => setIsAuthenticated(false)}
-              variant="outline"
-              className="text-red-900 border-white hover:bg-white/10"
-            >
-              Logout
-            </Button>
+            <div className="flex items-center space-x-2">
+              <Button 
+                onClick={() => setShowAnalytics(!showAnalytics)}
+                variant="outline"
+                className="text-red-900 border-white hover:bg-white/10"
+              >
+                <BarChart3 className="h-4 w-4 mr-2" />
+                {showAnalytics ? 'Hide Analytics' : 'Show Analytics'}
+              </Button>
+              <Button 
+                onClick={() => setIsAuthenticated(false)}
+                variant="outline"
+                className="text-red-900 border-white hover:bg-white/10"
+              >
+                Logout
+              </Button>
+            </div>
           </div>
         </div>
       </div>
 
       {/* Main Content */}
       <div className="container mx-auto px-4 py-8">
-        {/* Statistics Cards */}
-        <div className="grid md:grid-cols-4 gap-6 mb-8">
-          <Card className="border-0 shadow-lg">
-            <CardContent className="p-6 bg-white">
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-sm text-black">Total Responses</p>
-                  <p className="text-3xl font-bold text-red-900">{responses.length}</p>
-                </div>
-                <BarChart3 className="h-10 w-10 text-red-900" />
-              </div>
-            </CardContent>
-          </Card>
-
-          <Card className="border-0 shadow-lg">
-            <CardContent className="p-6 bg-white">
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-sm text-black">Active Sessions</p>
-                  <p className="text-3xl font-bold text-red-900">{sessions.filter(s => s.is_active).length}</p>
-                </div>
-                <Users className="h-10 w-10 text-red-900" />
-              </div>
-            </CardContent>
-          </Card>
-
-          <Card className="border-0 shadow-lg">
-            <CardContent className="p-6 bg-white">
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-sm text-black">Total Sessions</p>
-                  <p className="text-3xl font-bold text-red-900">{sessions.length}</p>
-                </div>
-                <Eye className="h-10 w-10 text-red-900" />
-              </div>
-            </CardContent>
-          </Card>
-
-          <Card className="border-0 shadow-lg">
-            <CardContent className="p-6 bg-white">
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-sm text-black">Avg. Questions</p>
-                  <p className="text-3xl font-bold text-red-900">
-                    {sessions.length > 0 ? Math.round(sessions.reduce((acc, s) => acc + s.questions.length, 0) / sessions.length) : 0}
-                  </p>
-                </div>
-                <FileText className="h-10 w-10 text-red-900" />
-              </div>
-            </CardContent>
-          </Card>
-        </div>
-
-        {/* Search and Actions */}
-        <Card className="shadow-lg border-0 mb-6">
-          <CardContent className="p-6 bg-white">
-            <div className="flex flex-col md:flex-row gap-4 items-center justify-between">
-              <div className="flex items-center space-x-4 flex-1">
-                <div className="relative flex-1 max-w-md">
-                  <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
-                  <Input
-                    placeholder="Search sessions..."
-                    value={searchTerm}
-                    onChange={(e) => setSearchTerm(e.target.value)}
-                    className="pl-10"
-                  />
-                </div>
-              </div>
-              <div className="flex space-x-2">
-                <Button 
-                  onClick={() => setShowEditor(true)}
-                  className="bg-green-600 hover:bg-green-700 text-white"
-                >
-                  <Plus className="h-4 w-4 mr-2" />
-                  New Session
-                </Button>
-                <Button 
-                  onClick={handleBulkExport}
-                  className="bg-red-900 hover:bg-red-800 text-white"
-                  disabled={selectedSessions.length === 0}
-                >
-                  <Download className="h-4 w-4 mr-2" />
-                  Export ({selectedSessions.length})
-                </Button>
-              </div>
+        {showAnalytics ? (
+          <div className="space-y-6">
+            <div className="flex items-center justify-between">
+              <h1 className="text-3xl font-bold text-foreground">Analytics Dashboard</h1>
+              <Button 
+                onClick={() => setShowAnalytics(false)}
+                variant="outline"
+              >
+                Back to Sessions
+              </Button>
             </div>
-          </CardContent>
-        </Card>
+            <AnalyticsDashboard sessions={sessions} responses={responses} />
+          </div>
+        ) : (
+          <>
+            {/* Statistics Cards */}
+            <div className="grid md:grid-cols-4 gap-6 mb-8">
+              <Card className="border-0 shadow-lg">
+                <CardContent className="p-6 bg-card">
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <p className="text-sm text-muted-foreground">Total Responses</p>
+                      <p className="text-3xl font-bold text-red-900">{responses.length}</p>
+                    </div>
+                    <BarChart3 className="h-10 w-10 text-red-900" />
+                  </div>
+                </CardContent>
+              </Card>
 
-        {/* Sessions Table */}
-        <Card className="shadow-xl border-0">
-          <CardHeader className="bg-gradient-to-r from-red-900 to-red-800 text-white rounded-t-lg">
-            <CardTitle className="text-2xl">Session Management</CardTitle>
-            <CardDescription className="text-red-100">
-              Comprehensive feedback session management with real-time data
-            </CardDescription>
-          </CardHeader>
-          <CardContent className="p-0 bg-white">
-            <div className="overflow-x-auto">
-              <Table>
-                <TableHeader>
-                  <TableRow className="bg-gray-50">
-                    <TableHead className="w-12">
-                      <input
-                        type="checkbox"
-                        onChange={(e) => {
-                          if (e.target.checked) {
-                            setSelectedSessions(filteredSessions.map(s => s.id));
-                          } else {
-                            setSelectedSessions([]);
-                          }
-                        }}
-                        checked={selectedSessions.length === filteredSessions.length && filteredSessions.length > 0}
+              <Card className="border-0 shadow-lg">
+                <CardContent className="p-6 bg-card">
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <p className="text-sm text-muted-foreground">Active Sessions</p>
+                      <p className="text-3xl font-bold text-red-900">{sessions.filter(s => s.is_active).length}</p>
+                    </div>
+                    <Users className="h-10 w-10 text-red-900" />
+                  </div>
+                </CardContent>
+              </Card>
+
+              <Card className="border-0 shadow-lg">
+                <CardContent className="p-6 bg-card">
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <p className="text-sm text-muted-foreground">Total Sessions</p>
+                      <p className="text-3xl font-bold text-red-900">{sessions.length}</p>
+                    </div>
+                    <Eye className="h-10 w-10 text-red-900" />
+                  </div>
+                </CardContent>
+              </Card>
+
+              <Card className="border-0 shadow-lg">
+                <CardContent className="p-6 bg-card">
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <p className="text-sm text-muted-foreground">Avg. Questions</p>
+                      <p className="text-3xl font-bold text-red-900">
+                        {sessions.length > 0 ? Math.round(sessions.reduce((acc, s) => acc + s.questions.length, 0) / sessions.length) : 0}
+                      </p>
+                    </div>
+                    <FileText className="h-10 w-10 text-red-900" />
+                  </div>
+                </CardContent>
+              </Card>
+            </div>
+
+            {/* Search and Actions */}
+            <Card className="shadow-lg border-0 mb-6">
+              <CardContent className="p-6 bg-card">
+                <div className="flex flex-col md:flex-row gap-4 items-center justify-between">
+                  <div className="flex items-center space-x-4 flex-1">
+                    <div className="relative flex-1 max-w-md">
+                      <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground h-4 w-4" />
+                      <Input
+                        placeholder="Search sessions..."
+                        value={searchTerm}
+                        onChange={(e) => setSearchTerm(e.target.value)}
+                        className="pl-10"
                       />
-                    </TableHead>
-                    <TableHead className="font-semibold text-black">Session Name</TableHead>
-                    <TableHead className="font-semibold text-black">Status</TableHead>
-                    <TableHead className="font-semibold text-black">Questions</TableHead>
-                    <TableHead className="font-semibold text-black">Responses</TableHead>
-                    <TableHead className="font-semibold text-black">Created</TableHead>
-                    <TableHead className="font-semibold text-black">Actions</TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {loading ? (
-                    <TableRow>
-                      <TableCell colSpan={7} className="text-center py-8">
-                        Loading sessions...
-                      </TableCell>
-                    </TableRow>
-                  ) : filteredSessions.length === 0 ? (
-                    <TableRow>
-                      <TableCell colSpan={7} className="text-center py-8">
-                        No sessions found. Create your first session!
-                      </TableCell>
-                    </TableRow>
-                  ) : (
-                    filteredSessions.map((session) => (
-                      <TableRow key={session.id} className="hover:bg-gray-50 transition-colors">
-                        <TableCell>
+                    </div>
+                  </div>
+                  <div className="flex space-x-2">
+                    <Button 
+                      onClick={() => setShowAnalytics(true)}
+                      className="bg-blue-600 hover:bg-blue-700 text-white"
+                    >
+                      <BarChart3 className="h-4 w-4 mr-2" />
+                      Analytics
+                    </Button>
+                    <Button 
+                      onClick={() => setShowEditor(true)}
+                      className="bg-green-600 hover:bg-green-700 text-white"
+                    >
+                      <Plus className="h-4 w-4 mr-2" />
+                      New Session
+                    </Button>
+                    <Button 
+                      onClick={handleBulkExport}
+                      className="bg-red-900 hover:bg-red-800 text-white"
+                      disabled={selectedSessions.length === 0}
+                    >
+                      <Download className="h-4 w-4 mr-2" />
+                      Export ({selectedSessions.length})
+                    </Button>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+
+            {/* Sessions Table */}
+            <Card className="shadow-xl border-0">
+              <CardHeader className="bg-gradient-to-r from-red-900 to-red-800 text-white rounded-t-lg">
+                <CardTitle className="text-2xl">Session Management</CardTitle>
+                <CardDescription className="text-red-100">
+                  Comprehensive feedback session management with real-time data
+                </CardDescription>
+              </CardHeader>
+              <CardContent className="p-0 bg-card">
+                <div className="overflow-x-auto">
+                  <Table>
+                    <TableHeader>
+                      <TableRow className="bg-gray-50">
+                        <TableHead className="w-12">
                           <input
                             type="checkbox"
-                            checked={selectedSessions.includes(session.id)}
-                            onChange={() => toggleSessionSelection(session.id)}
+                            onChange={(e) => {
+                              if (e.target.checked) {
+                                setSelectedSessions(filteredSessions.map(s => s.id));
+                              } else {
+                                setSelectedSessions([]);
+                              }
+                            }}
+                            checked={selectedSessions.length === filteredSessions.length && filteredSessions.length > 0}
                           />
-                        </TableCell>
-                        <TableCell className="font-medium text-black">{session.title}</TableCell>
-                        <TableCell>
-                          <span className={`px-2 py-1 rounded-full text-xs font-medium ${
-                            session.is_active 
-                              ? 'bg-green-100 text-green-800' 
-                              : 'bg-gray-100 text-gray-800'
-                          }`}>
-                            {session.is_active ? 'Active' : 'Inactive'}
-                          </span>
-                        </TableCell>
-                        <TableCell className="text-black">{session.questions.length}</TableCell>
-                        <TableCell>
-                          <span className="bg-red-100 text-red-900 px-3 py-1 rounded-full text-sm font-medium">
-                            {getResponseCount(session.id)}
-                          </span>
-                        </TableCell>
-                        <TableCell className="text-black">
-                          {new Date(session.created_at).toLocaleDateString()}
-                        </TableCell>
-                        <TableCell>
-                          <div className="flex space-x-1">
-                            <Button 
-                              size="sm" 
-                              className="bg-red-900 hover:bg-red-800 text-white"
-                              onClick={() => handleView(session)}
-                            >
-                              <Eye className="h-4 w-4" />
-                            </Button>
-                            <Button 
-                              size="sm" 
-                              variant="outline"
-                              className="border-red-900 text-red-900 hover:bg-red-50"
-                              onClick={() => handleEdit(session)}
-                            >
-                              <Edit className="h-4 w-4" />
-                            </Button>
-                            <Button 
-                              size="sm" 
-                              variant="outline"
-                              className="border-blue-600 text-blue-600 hover:bg-blue-50"
-                              onClick={() => setShowShareManager(session)}
-                            >
-                              <Share2 className="h-4 w-4" />
-                            </Button>
-                            <Button 
-                              size="sm" 
-                              variant="outline"
-                              className="border-red-900 text-red-900 hover:bg-red-50"
-                              onClick={() => handleExport(session.id, 'CSV')}
-                            >
-                              <Download className="h-4 w-4" />
-                            </Button>
-                            <AlertDialog>
-                              <AlertDialogTrigger asChild>
+                        </TableHead>
+                        <TableHead className="font-semibold text-black">Session Name</TableHead>
+                        <TableHead className="font-semibold text-black">Status</TableHead>
+                        <TableHead className="font-semibold text-black">Questions</TableHead>
+                        <TableHead className="font-semibold text-black">Responses</TableHead>
+                        <TableHead className="font-semibold text-black">Created</TableHead>
+                        <TableHead className="font-semibold text-black">Actions</TableHead>
+                      </TableRow>
+                    </TableHeader>
+                    <TableBody>
+                      {loading ? (
+                        <TableRow>
+                          <TableCell colSpan={7} className="text-center py-8">
+                            Loading sessions...
+                          </TableCell>
+                        </TableRow>
+                      ) : filteredSessions.length === 0 ? (
+                        <TableRow>
+                          <TableCell colSpan={7} className="text-center py-8">
+                            No sessions found. Create your first session!
+                          </TableCell>
+                        </TableRow>
+                      ) : (
+                        filteredSessions.map((session) => (
+                          <TableRow key={session.id} className="hover:bg-gray-50 transition-colors">
+                            <TableCell>
+                              <input
+                                type="checkbox"
+                                checked={selectedSessions.includes(session.id)}
+                                onChange={() => toggleSessionSelection(session.id)}
+                              />
+                            </TableCell>
+                            <TableCell className="font-medium text-black">{session.title}</TableCell>
+                            <TableCell>
+                              <span className={`px-2 py-1 rounded-full text-xs font-medium ${
+                                session.is_active 
+                                  ? 'bg-green-100 text-green-800' 
+                                  : 'bg-gray-100 text-gray-800'
+                              }`}>
+                                {session.is_active ? 'Active' : 'Inactive'}
+                              </span>
+                            </TableCell>
+                            <TableCell className="text-black">{session.questions.length}</TableCell>
+                            <TableCell>
+                              <span className="bg-red-100 text-red-900 px-3 py-1 rounded-full text-sm font-medium">
+                                {getResponseCount(session.id)}
+                              </span>
+                            </TableCell>
+                            <TableCell className="text-black">
+                              {new Date(session.created_at).toLocaleDateString()}
+                            </TableCell>
+                            <TableCell>
+                              <div className="flex space-x-1">
+                                <Button 
+                                  size="sm" 
+                                  className="bg-red-900 hover:bg-red-800 text-white"
+                                  onClick={() => handleView(session)}
+                                >
+                                  <Eye className="h-4 w-4" />
+                                </Button>
                                 <Button 
                                   size="sm" 
                                   variant="outline"
-                                  className="border-red-600 text-red-600 hover:bg-red-50"
+                                  className="border-red-900 text-red-900 hover:bg-red-50"
+                                  onClick={() => handleEdit(session)}
                                 >
-                                  <Trash2 className="h-4 w-4" />
+                                  <Edit className="h-4 w-4" />
                                 </Button>
-                              </AlertDialogTrigger>
-                              <AlertDialogContent>
-                                <AlertDialogHeader>
-                                  <AlertDialogTitle>Delete Session</AlertDialogTitle>
-                                  <AlertDialogDescription>
-                                    Are you sure you want to delete "{session.title}"? This will also delete all associated responses.
-                                  </AlertDialogDescription>
-                                </AlertDialogHeader>
-                                <AlertDialogFooter>
-                                  <AlertDialogCancel>Cancel</AlertDialogCancel>
-                                  <AlertDialogAction 
-                                    onClick={() => handleDelete(session.id)}
-                                    className="bg-red-600 hover:bg-red-700"
-                                  >
-                                    Delete
-                                  </AlertDialogAction>
-                                </AlertDialogFooter>
-                              </AlertDialogContent>
-                            </AlertDialog>
-                          </div>
-                        </TableCell>
-                      </TableRow>
-                    ))
-                  )}
-                </TableBody>
-              </Table>
-            </div>
-          </CardContent>
-        </Card>
+                                <Button 
+                                  size="sm" 
+                                  variant="outline"
+                                  className="border-blue-600 text-blue-600 hover:bg-blue-50"
+                                  onClick={() => setShowShareManager(session)}
+                                >
+                                  <Share2 className="h-4 w-4" />
+                                </Button>
+                                <Button 
+                                  size="sm" 
+                                  variant="outline"
+                                  className="border-red-900 text-red-900 hover:bg-red-50"
+                                  onClick={() => handleExport(session.id, 'CSV')}
+                                >
+                                  <Download className="h-4 w-4" />
+                                </Button>
+                                <AlertDialog>
+                                  <AlertDialogTrigger asChild>
+                                    <Button 
+                                      size="sm" 
+                                      variant="outline"
+                                      className="border-red-600 text-red-600 hover:bg-red-50"
+                                    >
+                                      <Trash2 className="h-4 w-4" />
+                                    </Button>
+                                  </AlertDialogTrigger>
+                                  <AlertDialogContent>
+                                    <AlertDialogHeader>
+                                      <AlertDialogTitle>Delete Session</AlertDialogTitle>
+                                      <AlertDialogDescription>
+                                        Are you sure you want to delete "{session.title}"? This will also delete all associated responses.
+                                      </AlertDialogDescription>
+                                    </AlertDialogHeader>
+                                    <AlertDialogFooter>
+                                      <AlertDialogCancel>Cancel</AlertDialogCancel>
+                                      <AlertDialogAction 
+                                        onClick={() => handleDelete(session.id)}
+                                        className="bg-red-600 hover:bg-red-700"
+                                      >
+                                        Delete
+                                      </AlertDialogAction>
+                                    </AlertDialogFooter>
+                                  </AlertDialogContent>
+                                </AlertDialog>
+                              </div>
+                            </TableCell>
+                          </TableRow>
+                        ))
+                      )}
+                    </TableBody>
+                  </Table>
+                </div>
+              </CardContent>
+            </Card>
 
-        {/* Share Manager Modal */}
-        {showShareManager && (
-          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50" onClick={() => setShowShareManager(null)}>
-            <div className="bg-white rounded-lg max-w-2xl w-full mx-4" onClick={(e) => e.stopPropagation()}>
-              <div className="p-6">
-                <ShareableLinkManager session={showShareManager} />
-                <div className="flex justify-end mt-4">
-                  <Button onClick={() => setShowShareManager(null)}>
-                    Close
-                  </Button>
+            {/* Share Manager Modal */}
+            {showShareManager && (
+              <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50" onClick={() => setShowShareManager(null)}>
+                <div className="bg-white rounded-lg max-w-2xl w-full mx-4" onClick={(e) => e.stopPropagation()}>
+                  <div className="p-6">
+                    <ShareableLinkManager session={showShareManager} />
+                    <div className="flex justify-end mt-4">
+                      <Button onClick={() => setShowShareManager(null)}>
+                        Close
+                      </Button>
+                    </div>
+                  </div>
                 </div>
               </div>
-            </div>
-          </div>
-        )}
+            )}
 
-        {/* View Session Modal */}
-        {viewingSession && (
-          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50" onClick={() => setViewingSession(null)}>
-            <div className="bg-white rounded-lg max-w-6xl w-full mx-4 max-h-[90vh] overflow-y-auto" onClick={(e) => e.stopPropagation()}>
-              <div className="bg-gradient-to-r from-red-900 to-red-800 text-white p-6 rounded-t-lg">
-                <h2 className="text-2xl font-bold">{viewingSession.title} - Responses</h2>
-                <p className="text-red-100">View and analyze feedback responses</p>
-              </div>
-              <div className="p-6">
-                <div className="grid md:grid-cols-3 gap-4 mb-6">
-                  <div className="bg-gray-50 p-4 rounded-lg">
-                    <h3 className="font-semibold text-black">Total Responses</h3>
-                    <p className="text-2xl font-bold text-red-900">{getResponseCount(viewingSession.id)}</p>
+            {/* View Session Modal */}
+            {viewingSession && (
+              <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50" onClick={() => setViewingSession(null)}>
+                <div className="bg-white rounded-lg max-w-6xl w-full mx-4 max-h-[90vh] overflow-y-auto" onClick={(e) => e.stopPropagation()}>
+                  <div className="bg-gradient-to-r from-red-900 to-red-800 text-white p-6 rounded-t-lg">
+                    <h2 className="text-2xl font-bold">{viewingSession.title} - Responses</h2>
+                    <p className="text-red-100">View and analyze feedback responses</p>
                   </div>
-                  <div className="bg-gray-50 p-4 rounded-lg">
-                    <h3 className="font-semibold text-black">Questions</h3>
-                    <p className="text-2xl font-bold text-red-900">{viewingSession.questions.length}</p>
-                  </div>
-                  <div className="bg-gray-50 p-4 rounded-lg">
-                    <h3 className="font-semibold text-black">Avg. Rating</h3>
-                    <p className="text-2xl font-bold text-red-900">★ {getAverageRating(viewingSession.id)}</p>
-                  </div>
-                </div>
+                  <div className="p-6">
+                    <div className="grid md:grid-cols-3 gap-4 mb-6">
+                      <div className="bg-gray-50 p-4 rounded-lg">
+                        <h3 className="font-semibold text-black">Total Responses</h3>
+                        <p className="text-2xl font-bold text-red-900">{getResponseCount(viewingSession.id)}</p>
+                      </div>
+                      <div className="bg-gray-50 p-4 rounded-lg">
+                        <h3 className="font-semibold text-black">Questions</h3>
+                        <p className="text-2xl font-bold text-red-900">{viewingSession.questions.length}</p>
+                      </div>
+                      <div className="bg-gray-50 p-4 rounded-lg">
+                        <h3 className="font-semibold text-black">Avg. Rating</h3>
+                        <p className="text-2xl font-bold text-red-900">★ {getAverageRating(viewingSession.id)}</p>
+                      </div>
+                    </div>
 
-                <div className="mb-6">
-                  <h3 className="text-lg font-semibold text-black mb-4">Recent Responses</h3>
-                  <div className="space-y-4 max-h-64 overflow-y-auto">
-                    {responses
-                      .filter(r => r.session_id === viewingSession.id)
-                      .slice(0, 5)
-                      .map((response) => (
-                        <div key={response.id} className="border rounded-lg p-4">
-                          <div className="flex justify-between items-start mb-2">
-                            <div>
-                              <p className="font-medium text-black">{response.user_name}</p>
-                              <p className="text-sm text-gray-600">{response.user_email} • {response.bootcamp_id}</p>
-                            </div>
-                            <p className="text-sm text-gray-500">
-                              {new Date(response.submitted_at).toLocaleString()}
-                            </p>
-                          </div>
-                          <div className="mt-2">
-                            {Object.entries(response.responses).map(([questionId, answer]) => {
-                              const question = viewingSession.questions.find((q: any) => q.id === questionId);
-                              return (
-                                <div key={questionId} className="mb-2">
-                                  <p className="text-sm font-medium text-gray-700">{question?.question}</p>
-                                  <p className="text-sm text-black">{String(answer)}</p>
+                    <div className="mb-6">
+                      <h3 className="text-lg font-semibold text-black mb-4">Recent Responses</h3>
+                      <div className="space-y-4 max-h-64 overflow-y-auto">
+                        {responses
+                          .filter(r => r.session_id === viewingSession.id)
+                          .slice(0, 5)
+                          .map((response) => (
+                            <div key={response.id} className="border rounded-lg p-4">
+                              <div className="flex justify-between items-start mb-2">
+                                <div>
+                                  <p className="font-medium text-black">{response.user_name}</p>
+                                  <p className="text-sm text-gray-600">{response.user_email} • {response.bootcamp_id}</p>
                                 </div>
-                              );
-                            })}
-                          </div>
-                        </div>
-                      ))}
-                  </div>
-                </div>
+                                <p className="text-sm text-gray-500">
+                                  {new Date(response.submitted_at).toLocaleString()}
+                                </p>
+                              </div>
+                              <div className="mt-2">
+                                {Object.entries(response.responses).map(([questionId, answer]) => {
+                                  const question = viewingSession.questions.find((q: any) => q.id === questionId);
+                                  return (
+                                    <div key={questionId} className="mb-2">
+                                      <p className="text-sm font-medium text-gray-700">{question?.question}</p>
+                                      <p className="text-sm text-black">{String(answer)}</p>
+                                    </div>
+                                  );
+                                })}
+                              </div>
+                            </div>
+                          ))}
+                      </div>
+                    </div>
 
-                <div className="flex justify-between items-center pt-4 border-t">
-                  <div className="space-x-2">
-                    <Button 
-                      onClick={() => handleExport(viewingSession.id, 'CSV')}
-                      className="bg-red-900 hover:bg-red-800 text-white"
-                    >
-                      <Download className="h-4 w-4 mr-2" />
-                      Export CSV
-                    </Button>
+                    <div className="flex justify-between items-center pt-4 border-t">
+                      <div className="space-x-2">
+                        <Button 
+                          onClick={() => handleExport(viewingSession.id, 'CSV')}
+                          className="bg-red-900 hover:bg-red-800 text-white"
+                        >
+                          <Download className="h-4 w-4 mr-2" />
+                          Export CSV
+                        </Button>
+                      </div>
+                      <Button 
+                        onClick={() => setViewingSession(null)}
+                        variant="outline"
+                      >
+                        Close
+                      </Button>
+                    </div>
                   </div>
-                  <Button 
-                    onClick={() => setViewingSession(null)}
-                    variant="outline"
-                  >
-                    Close
-                  </Button>
                 </div>
               </div>
-            </div>
-          </div>
+            )}
+          </>
         )}
       </div>
     </div>
