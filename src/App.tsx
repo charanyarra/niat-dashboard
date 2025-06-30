@@ -1,4 +1,3 @@
-
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -6,6 +5,11 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Index from "./pages/Index";
 import SessionSelector from "./pages/SessionSelector";
+import AdminDashboard from "./pages/AdminDashboard";
+import NotFound from "./pages/NotFound";
+import SharedFeedbackForm from "./pages/SharedFeedbackForm";
+
+// Import feedback pages
 import SpeedMathFeedback from "./pages/feedback/SpeedMathFeedback";
 import TribeHuddleFeedback from "./pages/feedback/TribeHuddleFeedback";
 import KaizenFeedback from "./pages/feedback/KaizenFeedback";
@@ -17,8 +21,6 @@ import IOTWorkshopFeedback from "./pages/feedback/IOTWorkshopFeedback";
 import LinkedInWorkshopFeedback from "./pages/feedback/LinkedInWorkshopFeedback";
 import DroneWorkshopFeedback from "./pages/feedback/DroneWorkshopFeedback";
 import TribeathonFeedback from "./pages/feedback/TribeathonFeedback";
-import AdminDashboard from "./pages/AdminDashboard";
-import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
 
@@ -31,6 +33,10 @@ const App = () => (
         <Routes>
           <Route path="/" element={<Index />} />
           <Route path="/session-selector" element={<SessionSelector />} />
+          <Route path="/admin" element={<AdminDashboard />} />
+          <Route path="/feedback/:shareLink" element={<SharedFeedbackForm />} />
+          
+          {/* Existing feedback routes */}
           <Route path="/feedback/speed-math" element={<SpeedMathFeedback />} />
           <Route path="/feedback/tribe-huddle" element={<TribeHuddleFeedback />} />
           <Route path="/feedback/kaizen" element={<KaizenFeedback />} />
@@ -42,7 +48,7 @@ const App = () => (
           <Route path="/feedback/linkedin-workshop" element={<LinkedInWorkshopFeedback />} />
           <Route path="/feedback/drone-workshop" element={<DroneWorkshopFeedback />} />
           <Route path="/feedback/tribeathon" element={<TribeathonFeedback />} />
-          <Route path="/admin" element={<AdminDashboard />} />
+          
           <Route path="*" element={<NotFound />} />
         </Routes>
       </BrowserRouter>

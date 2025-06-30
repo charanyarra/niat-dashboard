@@ -9,7 +9,101 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
-      [_ in never]: never
+      admin_users: {
+        Row: {
+          created_at: string | null
+          id: string
+          is_active: boolean | null
+          password_hash: string
+          username: string
+        }
+        Insert: {
+          created_at?: string | null
+          id?: string
+          is_active?: boolean | null
+          password_hash: string
+          username: string
+        }
+        Update: {
+          created_at?: string | null
+          id?: string
+          is_active?: boolean | null
+          password_hash?: string
+          username?: string
+        }
+        Relationships: []
+      }
+      feedback_responses: {
+        Row: {
+          bootcamp_id: string
+          id: string
+          responses: Json
+          session_id: string | null
+          submitted_at: string | null
+          user_email: string
+          user_name: string
+        }
+        Insert: {
+          bootcamp_id: string
+          id?: string
+          responses?: Json
+          session_id?: string | null
+          submitted_at?: string | null
+          user_email: string
+          user_name: string
+        }
+        Update: {
+          bootcamp_id?: string
+          id?: string
+          responses?: Json
+          session_id?: string | null
+          submitted_at?: string | null
+          user_email?: string
+          user_name?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "feedback_responses_session_id_fkey"
+            columns: ["session_id"]
+            isOneToOne: false
+            referencedRelation: "feedback_sessions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      feedback_sessions: {
+        Row: {
+          created_at: string | null
+          description: string | null
+          id: string
+          is_active: boolean | null
+          questions: Json
+          share_link: string | null
+          title: string
+          updated_at: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          description?: string | null
+          id?: string
+          is_active?: boolean | null
+          questions?: Json
+          share_link?: string | null
+          title: string
+          updated_at?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          description?: string | null
+          id?: string
+          is_active?: boolean | null
+          questions?: Json
+          share_link?: string | null
+          title?: string
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never

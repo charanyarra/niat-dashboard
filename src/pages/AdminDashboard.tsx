@@ -1,12 +1,12 @@
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useToast } from "@/hooks/use-toast";
 import { Link } from "react-router-dom";
-import { ArrowLeft, BarChart3, Download, Eye, Lock, Users, Edit, Trash2, Search, Filter, FileText } from "lucide-react";
+import { ArrowLeft, BarChart3, Download, Eye, Lock, Users, Edit, Trash2, Search, Filter, FileText, Plus, Share2 } from "lucide-react";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import {
   AlertDialog,
@@ -19,14 +19,32 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
+import { useFeedbackData } from "@/hooks/useFeedbackData";
+import SessionEditor from "@/components/SessionEditor";
+import ShareableLinkManager from "@/components/ShareableLinkManager";
 
 const AdminDashboard = () => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [password, setPassword] = useState("");
   const [searchTerm, setSearchTerm] = useState("");
-  const [selectedSessions, setSelectedSessions] = useState<number[]>([]);
+  const [selectedSessions, setSelectedSessions] = useState<string[]>([]);
   const [viewingSession, setViewingSession] = useState<any>(null);
+  const [editingSession, setEditingSession] = useState<any>(null);
+  const [showEditor, setShowEditor] = useState(false);
+  const [showShareManager, setShowShareManager] = useState<any>(null);
   const { toast } = useToast();
+
+  const {
+    sessions,
+    responses,
+    loading,
+    fetchSessions,
+    fetchResponses,
+    createSession,
+    updateSession,
+    deleteSession,
+    exportToCSV
+  } = useFeedbackData();
 
   const handleLogin = (e: React.FormEvent) => {
     e.preventDefault();
@@ -45,55 +63,46 @@ const AdminDashboard = () => {
     }
   };
 
-  const sessions = [
-    { id: 1, name: "Speed Math", responses: 25, lastResponse: "2 hours ago", status: "Active", avgRating: 4.2 },
-    { id: 2, name: "Tribe-huddle", responses: 18, lastResponse: "1 day ago", status: "Active", avgRating: 4.5 },
-    { id: 3, name: "Kaizen", responses: 22, lastResponse: "3 hours ago", status: "Active", avgRating: 4.1 },
-    { id: 4, name: "Personal Branding", responses: 31, lastResponse: "5 hours ago", status: "Active", avgRating: 4.3 },
-    { id: 5, name: "Community Building", responses: 19, lastResponse: "1 day ago", status: "Active", avgRating: 4.0 },
-    { id: 6, name: "Gen AI Feedback", responses: 28, lastResponse: "30 minutes ago", status: "Active", avgRating: 4.4 },
-    { id: 7, name: "Gen AI Video Submission", responses: 15, lastResponse: "4 hours ago", status: "Draft", avgRating: 4.2 },
-    { id: 8, name: "IOT Workshop", responses: 21, lastResponse: "6 hours ago", status: "Active", avgRating: 4.1 },
-    { id: 9, name: "LinkedIn Workshop", responses: 26, lastResponse: "2 hours ago", status: "Active", avgRating: 4.3 },
-    { id: 10, name: "Drone Workshop", responses: 17, lastResponse: "1 day ago", status: "Active", avgRating: 4.0 },
-    { id: 11, name: "Tribeathon", responses: 33, lastResponse: "1 hour ago", status: "Active", avgRating: 4.6 }
-  ];
-
-  const sampleFeedbackData = [
-    { id: 1, name: "John Doe", email: "john@example.com", bootcampId: "BC001", rating: 5, feedback: "Excellent session!" },
-    { id: 2, name: "Jane Smith", email: "jane@example.com", bootcampId: "BC002", rating: 4, feedback: "Very informative and well structured." },
-    { id: 3, name: "Mike Johnson", email: "mike@example.com", bootcampId: "BC003", rating: 4, feedback: "Good content, could use more examples." }
-  ];
-
   const filteredSessions = sessions.filter(session =>
-    session.name.toLowerCase().includes(searchTerm.toLowerCase())
+    session.title.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
-  const handleEdit = (sessionId: number) => {
-    toast({
-      title: "Edit Session",
-      description: `Editing session ${sessionId}. Redirecting to edit form...`,
-    });
+  const handleEdit = (session: any) => {
+    setEditingSession(session);
+    setShowEditor(true);
   };
 
   const handleView = (session: any) => {
     setViewingSession(session);
+    fetchResponses(session.id);
   };
 
-  const handleExport = (sessionId: number, format: string) => {
+  const handleExport = (sessionId: string, format: string) => {
     const session = sessions.find(s => s.id === sessionId);
-    toast({
-      title: "Export Started",
-      description: `Exporting ${session?.name} data in ${format} format...`,
-    });
-    
-    // Simulate export
-    setTimeout(() => {
+    if (!session) return;
+
+    const csvData = exportToCSV(sessionId);
+    if (!csvData) {
       toast({
-        title: "Export Complete",
-        description: `${session?.name} data exported successfully!`,
+        title: "No Data to Export",
+        description: "This session has no responses yet.",
+        variant: "destructive"
       });
-    }, 2000);
+      return;
+    }
+
+    const blob = new Blob([csvData], { type: 'text/csv' });
+    const url = window.URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `${session.title}-feedback-${new Date().toISOString().split('T')[0]}.csv`;
+    a.click();
+    window.URL.revokeObjectURL(url);
+
+    toast({
+      title: "Export Complete",
+      description: `${session.title} data exported successfully!`,
+    });
   };
 
   const handleBulkExport = () => {
@@ -106,26 +115,74 @@ const AdminDashboard = () => {
       return;
     }
     
-    toast({
-      title: "Bulk Export Started",
-      description: `Exporting ${selectedSessions.length} sessions...`,
+    selectedSessions.forEach(sessionId => {
+      handleExport(sessionId, 'CSV');
     });
   };
 
-  const handleDelete = (sessionId: number) => {
-    const session = sessions.find(s => s.id === sessionId);
-    toast({
-      title: "Session Deleted",
-      description: `${session?.name} has been deleted successfully.`,
-    });
+  const handleDelete = async (sessionId: string) => {
+    try {
+      await deleteSession(sessionId);
+      toast({
+        title: "Session Deleted",
+        description: "Session has been deleted successfully.",
+      });
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: "Failed to delete session.",
+        variant: "destructive"
+      });
+    }
   };
 
-  const toggleSessionSelection = (sessionId: number) => {
+  const handleSaveSession = async (sessionData: any) => {
+    try {
+      if (editingSession) {
+        await updateSession(editingSession.id, sessionData);
+        toast({
+          title: "Session Updated",
+          description: "Session has been updated successfully.",
+        });
+      } else {
+        await createSession(sessionData);
+        toast({
+          title: "Session Created",
+          description: "New session has been created successfully.",
+        });
+      }
+      setShowEditor(false);
+      setEditingSession(null);
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: "Failed to save session.",
+        variant: "destructive"
+      });
+    }
+  };
+
+  const toggleSessionSelection = (sessionId: string) => {
     setSelectedSessions(prev =>
       prev.includes(sessionId)
         ? prev.filter(id => id !== sessionId)
         : [...prev, sessionId]
     );
+  };
+
+  const getResponseCount = (sessionId: string) => {
+    return responses.filter(r => r.session_id === sessionId).length;
+  };
+
+  const getAverageRating = (sessionId: string) => {
+    const sessionResponses = responses.filter(r => r.session_id === sessionId);
+    if (sessionResponses.length === 0) return 0;
+    
+    const ratings = sessionResponses.flatMap(response => 
+      Object.values(response.responses).filter(val => typeof val === 'number')
+    );
+    
+    return ratings.length > 0 ? (ratings.reduce((a, b) => a + b, 0) / ratings.length).toFixed(1) : 0;
   };
 
   if (!isAuthenticated) {
@@ -178,6 +235,43 @@ const AdminDashboard = () => {
     );
   }
 
+  if (showEditor) {
+    return (
+      <div className="min-h-screen bg-gray-50">
+        <div className="bg-gradient-to-r from-red-900 to-red-800 text-white py-6">
+          <div className="container mx-auto px-4">
+            <div className="flex items-center justify-between">
+              <Button 
+                onClick={() => {
+                  setShowEditor(false);
+                  setEditingSession(null);
+                }}
+                variant="outline"
+                className="text-red-900 border-white hover:bg-white/10"
+              >
+                <ArrowLeft className="h-4 w-4 mr-2" />
+                Back to Dashboard
+              </Button>
+              <img 
+                src="/lovable-uploads/8b444953-4cf5-4245-a883-10795b1e23c3.png" 
+                alt="NIAT Logo" 
+                className="h-8 w-auto"
+              />
+            </div>
+          </div>
+        </div>
+        <SessionEditor
+          session={editingSession}
+          onSave={handleSaveSession}
+          onCancel={() => {
+            setShowEditor(false);
+            setEditingSession(null);
+          }}
+        />
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Header */}
@@ -215,9 +309,7 @@ const AdminDashboard = () => {
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-sm text-black">Total Responses</p>
-                  <p className="text-3xl font-bold text-red-900">
-                    {sessions.reduce((total, session) => total + session.responses, 0)}
-                  </p>
+                  <p className="text-3xl font-bold text-red-900">{responses.length}</p>
                 </div>
                 <BarChart3 className="h-10 w-10 text-red-900" />
               </div>
@@ -229,7 +321,7 @@ const AdminDashboard = () => {
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-sm text-black">Active Sessions</p>
-                  <p className="text-3xl font-bold text-red-900">{sessions.filter(s => s.status === 'Active').length}</p>
+                  <p className="text-3xl font-bold text-red-900">{sessions.filter(s => s.is_active).length}</p>
                 </div>
                 <Users className="h-10 w-10 text-red-900" />
               </div>
@@ -240,10 +332,8 @@ const AdminDashboard = () => {
             <CardContent className="p-6 bg-white">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm text-black">Avg. Rating</p>
-                  <p className="text-3xl font-bold text-red-900">
-                    {(sessions.reduce((total, session) => total + session.avgRating, 0) / sessions.length).toFixed(1)}
-                  </p>
+                  <p className="text-sm text-black">Total Sessions</p>
+                  <p className="text-3xl font-bold text-red-900">{sessions.length}</p>
                 </div>
                 <Eye className="h-10 w-10 text-red-900" />
               </div>
@@ -254,8 +344,10 @@ const AdminDashboard = () => {
             <CardContent className="p-6 bg-white">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm text-black">Draft Sessions</p>
-                  <p className="text-3xl font-bold text-red-900">{sessions.filter(s => s.status === 'Draft').length}</p>
+                  <p className="text-sm text-black">Avg. Questions</p>
+                  <p className="text-3xl font-bold text-red-900">
+                    {sessions.length > 0 ? Math.round(sessions.reduce((acc, s) => acc + s.questions.length, 0) / sessions.length) : 0}
+                  </p>
                 </div>
                 <FileText className="h-10 w-10 text-red-900" />
               </div>
@@ -263,7 +355,7 @@ const AdminDashboard = () => {
           </Card>
         </div>
 
-        {/* Search and Bulk Actions */}
+        {/* Search and Actions */}
         <Card className="shadow-lg border-0 mb-6">
           <CardContent className="p-6 bg-white">
             <div className="flex flex-col md:flex-row gap-4 items-center justify-between">
@@ -277,31 +369,34 @@ const AdminDashboard = () => {
                     className="pl-10"
                   />
                 </div>
-                <Button variant="outline" className="border-red-900 text-red-900 hover:bg-red-50">
-                  <Filter className="h-4 w-4 mr-2" />
-                  Filter
-                </Button>
               </div>
               <div className="flex space-x-2">
+                <Button 
+                  onClick={() => setShowEditor(true)}
+                  className="bg-green-600 hover:bg-green-700 text-white"
+                >
+                  <Plus className="h-4 w-4 mr-2" />
+                  New Session
+                </Button>
                 <Button 
                   onClick={handleBulkExport}
                   className="bg-red-900 hover:bg-red-800 text-white"
                   disabled={selectedSessions.length === 0}
                 >
                   <Download className="h-4 w-4 mr-2" />
-                  Bulk Export ({selectedSessions.length})
+                  Export ({selectedSessions.length})
                 </Button>
               </div>
             </div>
           </CardContent>
         </Card>
 
-        {/* Enhanced Session Table */}
+        {/* Sessions Table */}
         <Card className="shadow-xl border-0">
           <CardHeader className="bg-gradient-to-r from-red-900 to-red-800 text-white rounded-t-lg">
             <CardTitle className="text-2xl">Session Management</CardTitle>
             <CardDescription className="text-red-100">
-              Manage feedback sessions with advanced controls
+              Comprehensive feedback session management with real-time data
             </CardDescription>
           </CardHeader>
           <CardContent className="p-0 bg-white">
@@ -324,155 +419,199 @@ const AdminDashboard = () => {
                     </TableHead>
                     <TableHead className="font-semibold text-black">Session Name</TableHead>
                     <TableHead className="font-semibold text-black">Status</TableHead>
+                    <TableHead className="font-semibold text-black">Questions</TableHead>
                     <TableHead className="font-semibold text-black">Responses</TableHead>
-                    <TableHead className="font-semibold text-black">Avg. Rating</TableHead>
-                    <TableHead className="font-semibold text-black">Last Response</TableHead>
+                    <TableHead className="font-semibold text-black">Created</TableHead>
                     <TableHead className="font-semibold text-black">Actions</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {filteredSessions.map((session) => (
-                    <TableRow key={session.id} className="hover:bg-gray-50 transition-colors">
-                      <TableCell>
-                        <input
-                          type="checkbox"
-                          checked={selectedSessions.includes(session.id)}
-                          onChange={() => toggleSessionSelection(session.id)}
-                        />
-                      </TableCell>
-                      <TableCell className="font-medium text-black">{session.name}</TableCell>
-                      <TableCell>
-                        <span className={`px-2 py-1 rounded-full text-xs font-medium ${
-                          session.status === 'Active' 
-                            ? 'bg-green-100 text-green-800' 
-                            : 'bg-yellow-100 text-yellow-800'
-                        }`}>
-                          {session.status}
-                        </span>
-                      </TableCell>
-                      <TableCell>
-                        <span className="bg-red-100 text-red-900 px-3 py-1 rounded-full text-sm font-medium">
-                          {session.responses}
-                        </span>
-                      </TableCell>
-                      <TableCell className="text-black">★ {session.avgRating}</TableCell>
-                      <TableCell className="text-black">{session.lastResponse}</TableCell>
-                      <TableCell>
-                        <div className="flex space-x-1">
-                          <Button 
-                            size="sm" 
-                            className="bg-red-900 hover:bg-red-800 text-white"
-                            onClick={() => handleView(session)}
-                          >
-                            <Eye className="h-4 w-4" />
-                          </Button>
-                          <Button 
-                            size="sm" 
-                            variant="outline"
-                            className="border-red-900 text-red-900 hover:bg-red-50"
-                            onClick={() => handleEdit(session.id)}
-                          >
-                            <Edit className="h-4 w-4" />
-                          </Button>
-                          <Button 
-                            size="sm" 
-                            variant="outline"
-                            className="border-red-900 text-red-900 hover:bg-red-50"
-                            onClick={() => handleExport(session.id, 'CSV')}
-                          >
-                            <Download className="h-4 w-4" />
-                          </Button>
-                          <AlertDialog>
-                            <AlertDialogTrigger asChild>
-                              <Button 
-                                size="sm" 
-                                variant="outline"
-                                className="border-red-600 text-red-600 hover:bg-red-50"
-                              >
-                                <Trash2 className="h-4 w-4" />
-                              </Button>
-                            </AlertDialogTrigger>
-                            <AlertDialogContent>
-                              <AlertDialogHeader>
-                                <AlertDialogTitle>Delete Session</AlertDialogTitle>
-                                <AlertDialogDescription>
-                                  Are you sure you want to delete "{session.name}"? This action cannot be undone.
-                                </AlertDialogDescription>
-                              </AlertDialogHeader>
-                              <AlertDialogFooter>
-                                <AlertDialogCancel>Cancel</AlertDialogCancel>
-                                <AlertDialogAction 
-                                  onClick={() => handleDelete(session.id)}
-                                  className="bg-red-600 hover:bg-red-700"
-                                >
-                                  Delete
-                                </AlertDialogAction>
-                              </AlertDialogFooter>
-                            </AlertDialogContent>
-                          </AlertDialog>
-                        </div>
+                  {loading ? (
+                    <TableRow>
+                      <TableCell colSpan={7} className="text-center py-8">
+                        Loading sessions...
                       </TableCell>
                     </TableRow>
-                  ))}
+                  ) : filteredSessions.length === 0 ? (
+                    <TableRow>
+                      <TableCell colSpan={7} className="text-center py-8">
+                        No sessions found. Create your first session!
+                      </TableCell>
+                    </TableRow>
+                  ) : (
+                    filteredSessions.map((session) => (
+                      <TableRow key={session.id} className="hover:bg-gray-50 transition-colors">
+                        <TableCell>
+                          <input
+                            type="checkbox"
+                            checked={selectedSessions.includes(session.id)}
+                            onChange={() => toggleSessionSelection(session.id)}
+                          />
+                        </TableCell>
+                        <TableCell className="font-medium text-black">{session.title}</TableCell>
+                        <TableCell>
+                          <span className={`px-2 py-1 rounded-full text-xs font-medium ${
+                            session.is_active 
+                              ? 'bg-green-100 text-green-800' 
+                              : 'bg-gray-100 text-gray-800'
+                          }`}>
+                            {session.is_active ? 'Active' : 'Inactive'}
+                          </span>
+                        </TableCell>
+                        <TableCell className="text-black">{session.questions.length}</TableCell>
+                        <TableCell>
+                          <span className="bg-red-100 text-red-900 px-3 py-1 rounded-full text-sm font-medium">
+                            {getResponseCount(session.id)}
+                          </span>
+                        </TableCell>
+                        <TableCell className="text-black">
+                          {new Date(session.created_at).toLocaleDateString()}
+                        </TableCell>
+                        <TableCell>
+                          <div className="flex space-x-1">
+                            <Button 
+                              size="sm" 
+                              className="bg-red-900 hover:bg-red-800 text-white"
+                              onClick={() => handleView(session)}
+                            >
+                              <Eye className="h-4 w-4" />
+                            </Button>
+                            <Button 
+                              size="sm" 
+                              variant="outline"
+                              className="border-red-900 text-red-900 hover:bg-red-50"
+                              onClick={() => handleEdit(session)}
+                            >
+                              <Edit className="h-4 w-4" />
+                            </Button>
+                            <Button 
+                              size="sm" 
+                              variant="outline"
+                              className="border-blue-600 text-blue-600 hover:bg-blue-50"
+                              onClick={() => setShowShareManager(session)}
+                            >
+                              <Share2 className="h-4 w-4" />
+                            </Button>
+                            <Button 
+                              size="sm" 
+                              variant="outline"
+                              className="border-red-900 text-red-900 hover:bg-red-50"
+                              onClick={() => handleExport(session.id, 'CSV')}
+                            >
+                              <Download className="h-4 w-4" />
+                            </Button>
+                            <AlertDialog>
+                              <AlertDialogTrigger asChild>
+                                <Button 
+                                  size="sm" 
+                                  variant="outline"
+                                  className="border-red-600 text-red-600 hover:bg-red-50"
+                                >
+                                  <Trash2 className="h-4 w-4" />
+                                </Button>
+                              </AlertDialogTrigger>
+                              <AlertDialogContent>
+                                <AlertDialogHeader>
+                                  <AlertDialogTitle>Delete Session</AlertDialogTitle>
+                                  <AlertDialogDescription>
+                                    Are you sure you want to delete "{session.title}"? This will also delete all associated responses.
+                                  </AlertDialogDescription>
+                                </AlertDialogHeader>
+                                <AlertDialogFooter>
+                                  <AlertDialogCancel>Cancel</AlertDialogCancel>
+                                  <AlertDialogAction 
+                                    onClick={() => handleDelete(session.id)}
+                                    className="bg-red-600 hover:bg-red-700"
+                                  >
+                                    Delete
+                                  </AlertDialogAction>
+                                </AlertDialogFooter>
+                              </AlertDialogContent>
+                            </AlertDialog>
+                          </div>
+                        </TableCell>
+                      </TableRow>
+                    ))
+                  )}
                 </TableBody>
               </Table>
             </div>
           </CardContent>
         </Card>
 
+        {/* Share Manager Modal */}
+        {showShareManager && (
+          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50" onClick={() => setShowShareManager(null)}>
+            <div className="bg-white rounded-lg max-w-2xl w-full mx-4" onClick={(e) => e.stopPropagation()}>
+              <div className="p-6">
+                <ShareableLinkManager session={showShareManager} />
+                <div className="flex justify-end mt-4">
+                  <Button onClick={() => setShowShareManager(null)}>
+                    Close
+                  </Button>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
+
         {/* View Session Modal */}
         {viewingSession && (
           <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50" onClick={() => setViewingSession(null)}>
-            <div className="bg-white rounded-lg max-w-4xl w-full mx-4 max-h-[90vh] overflow-y-auto" onClick={(e) => e.stopPropagation()}>
+            <div className="bg-white rounded-lg max-w-6xl w-full mx-4 max-h-[90vh] overflow-y-auto" onClick={(e) => e.stopPropagation()}>
               <div className="bg-gradient-to-r from-red-900 to-red-800 text-white p-6 rounded-t-lg">
-                <h2 className="text-2xl font-bold">{viewingSession.name} - Detailed View</h2>
-                <p className="text-red-100">Session feedback responses and analytics</p>
+                <h2 className="text-2xl font-bold">{viewingSession.title} - Responses</h2>
+                <p className="text-red-100">View and analyze feedback responses</p>
               </div>
               <div className="p-6">
-                {/* Session Stats */}
                 <div className="grid md:grid-cols-3 gap-4 mb-6">
                   <div className="bg-gray-50 p-4 rounded-lg">
                     <h3 className="font-semibold text-black">Total Responses</h3>
-                    <p className="text-2xl font-bold text-red-900">{viewingSession.responses}</p>
+                    <p className="text-2xl font-bold text-red-900">{getResponseCount(viewingSession.id)}</p>
                   </div>
                   <div className="bg-gray-50 p-4 rounded-lg">
-                    <h3 className="font-semibold text-black">Average Rating</h3>
-                    <p className="text-2xl font-bold text-red-900">★ {viewingSession.avgRating}</p>
+                    <h3 className="font-semibold text-black">Questions</h3>
+                    <p className="text-2xl font-bold text-red-900">{viewingSession.questions.length}</p>
                   </div>
                   <div className="bg-gray-50 p-4 rounded-lg">
-                    <h3 className="font-semibold text-black">Status</h3>
-                    <span className={`px-3 py-1 rounded-full text-sm font-medium ${
-                      viewingSession.status === 'Active' 
-                        ? 'bg-green-100 text-green-800' 
-                        : 'bg-yellow-100 text-yellow-800'
-                    }`}>
-                      {viewingSession.status}
-                    </span>
+                    <h3 className="font-semibold text-black">Avg. Rating</h3>
+                    <p className="text-2xl font-bold text-red-900">★ {getAverageRating(viewingSession.id)}</p>
                   </div>
                 </div>
 
-                {/* Sample Feedback Data */}
                 <div className="mb-6">
-                  <h3 className="text-lg font-semibold text-black mb-4">Recent Feedback</h3>
-                  <div className="space-y-4">
-                    {sampleFeedbackData.map((feedback) => (
-                      <div key={feedback.id} className="border rounded-lg p-4">
-                        <div className="flex justify-between items-start mb-2">
-                          <div>
-                            <p className="font-medium text-black">{feedback.name}</p>
-                            <p className="text-sm text-gray-600">{feedback.email} • {feedback.bootcampId}</p>
+                  <h3 className="text-lg font-semibold text-black mb-4">Recent Responses</h3>
+                  <div className="space-y-4 max-h-64 overflow-y-auto">
+                    {responses
+                      .filter(r => r.session_id === viewingSession.id)
+                      .slice(0, 5)
+                      .map((response) => (
+                        <div key={response.id} className="border rounded-lg p-4">
+                          <div className="flex justify-between items-start mb-2">
+                            <div>
+                              <p className="font-medium text-black">{response.user_name}</p>
+                              <p className="text-sm text-gray-600">{response.user_email} • {response.bootcamp_id}</p>
+                            </div>
+                            <p className="text-sm text-gray-500">
+                              {new Date(response.submitted_at).toLocaleString()}
+                            </p>
                           </div>
-                          <div className="text-yellow-500">
-                            {'★'.repeat(feedback.rating)}{'☆'.repeat(5-feedback.rating)}
+                          <div className="mt-2">
+                            {Object.entries(response.responses).map(([questionId, answer]) => {
+                              const question = viewingSession.questions.find((q: any) => q.id === questionId);
+                              return (
+                                <div key={questionId} className="mb-2">
+                                  <p className="text-sm font-medium text-gray-700">{question?.question}</p>
+                                  <p className="text-sm text-black">{String(answer)}</p>
+                                </div>
+                              );
+                            })}
                           </div>
                         </div>
-                        <p className="text-black">{feedback.feedback}</p>
-                      </div>
-                    ))}
+                      ))}
                   </div>
                 </div>
 
-                {/* Export Options */}
                 <div className="flex justify-between items-center pt-4 border-t">
                   <div className="space-x-2">
                     <Button 
@@ -481,14 +620,6 @@ const AdminDashboard = () => {
                     >
                       <Download className="h-4 w-4 mr-2" />
                       Export CSV
-                    </Button>
-                    <Button 
-                      onClick={() => handleExport(viewingSession.id, 'PDF')}
-                      variant="outline"
-                      className="border-red-900 text-red-900 hover:bg-red-50"
-                    >
-                      <Download className="h-4 w-4 mr-2" />
-                      Export PDF
                     </Button>
                   </div>
                   <Button 
@@ -502,22 +633,6 @@ const AdminDashboard = () => {
             </div>
           </div>
         )}
-
-        {/* Integration Info */}
-        <Card className="mt-8 border-0 shadow-lg bg-white">
-          <CardContent className="p-6">
-            <h3 className="text-lg font-semibold text-black mb-2">System Features</h3>
-            <p className="text-black mb-4">
-              Advanced admin dashboard with comprehensive session management, real-time analytics, and export capabilities.
-            </p>
-            <div className="flex flex-wrap gap-2">
-              <span className="bg-green-100 text-green-800 px-3 py-1 rounded-full text-sm">✓ Bulk Operations</span>
-              <span className="bg-red-100 text-red-900 px-3 py-1 rounded-full text-sm">✓ Real-time Analytics</span>
-              <span className="bg-gray-100 text-black px-3 py-1 rounded-full text-sm">✓ Advanced Search</span>
-              <span className="bg-blue-100 text-blue-800 px-3 py-1 rounded-full text-sm">✓ Multiple Export Formats</span>
-            </div>
-          </CardContent>
-        </Card>
       </div>
     </div>
   );
