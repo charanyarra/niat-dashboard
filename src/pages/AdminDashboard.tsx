@@ -5,7 +5,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useToast } from "@/hooks/use-toast";
 import { Link } from "react-router-dom";
-import { ArrowLeft, BarChart3, Download, Eye, Lock, Users, Edit, Trash2, Search, Filter, FileText, Plus, Share2 } from "lucide-react";
+import { ArrowLeft, BarChart3, Download, Eye, Lock, Users, Edit, Trash2, Search, Filter, FileText, Plus, Share2, Database } from "lucide-react";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import {
   AlertDialog,
@@ -23,6 +23,7 @@ import SessionEditor from "@/components/SessionEditor";
 import ShareableLinkManager from "@/components/ShareableLinkManager";
 import ThemeToggle from "@/components/ThemeToggle";
 import AnalyticsDashboard from "@/components/AnalyticsDashboard";
+import DataManagementHub from "@/components/DataManagementHub";
 
 const AdminDashboard = () => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
@@ -34,6 +35,7 @@ const AdminDashboard = () => {
   const [showEditor, setShowEditor] = useState(false);
   const [showShareManager, setShowShareManager] = useState<any>(null);
   const [showAnalytics, setShowAnalytics] = useState(false);
+  const [showDataManagement, setShowDataManagement] = useState(false);
   const { toast } = useToast();
 
   const {
@@ -297,6 +299,14 @@ const AdminDashboard = () => {
             </div>
             <div className="flex items-center space-x-2">
               <Button 
+                onClick={() => setShowDataManagement(!showDataManagement)}
+                variant="outline"
+                className="text-red-900 border-white hover:bg-white/10"
+              >
+                <Database className="h-4 w-4 mr-2" />
+                {showDataManagement ? 'Hide Data Hub' : 'Data Hub'}
+              </Button>
+              <Button 
                 onClick={() => setShowAnalytics(!showAnalytics)}
                 variant="outline"
                 className="text-red-900 border-white hover:bg-white/10"
@@ -318,7 +328,24 @@ const AdminDashboard = () => {
 
       {/* Main Content */}
       <div className="container mx-auto px-4 py-8">
-        {showAnalytics ? (
+        {showDataManagement ? (
+          <div className="space-y-6">
+            <div className="flex items-center justify-between">
+              <h1 className="text-3xl font-bold text-foreground">Data Management Hub</h1>
+              <Button 
+                onClick={() => setShowDataManagement(false)}
+                variant="outline"
+              >
+                Back to Sessions
+              </Button>
+            </div>
+            <DataManagementHub 
+              sessions={sessions}
+              responses={responses}
+              onExport={handleExport}
+            />
+          </div>
+        ) : showAnalytics ? (
           <div className="space-y-6">
             <div className="flex items-center justify-between">
               <h1 className="text-3xl font-bold text-foreground">Analytics Dashboard</h1>
@@ -402,6 +429,13 @@ const AdminDashboard = () => {
                     </div>
                   </div>
                   <div className="flex space-x-2">
+                    <Button 
+                      onClick={() => setShowDataManagement(true)}
+                      className="bg-purple-600 hover:bg-purple-700 text-white"
+                    >
+                      <Database className="h-4 w-4 mr-2" />
+                      Data Hub
+                    </Button>
                     <Button 
                       onClick={() => setShowAnalytics(true)}
                       className="bg-blue-600 hover:bg-blue-700 text-white"
