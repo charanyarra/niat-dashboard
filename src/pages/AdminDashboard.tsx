@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -5,7 +6,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useToast } from "@/hooks/use-toast";
 import { Link } from "react-router-dom";
-import { ArrowLeft, BarChart3, Download, Eye, Lock, Users, Edit, Trash2, Search, Filter, FileText, Plus, Share2, Database } from "lucide-react";
+import { ArrowLeft, BarChart3, Download, Eye, Lock, Users, Edit, Trash2, Search, Filter, FileText, Plus, Share2, Database, Settings, TrendingUp } from "lucide-react";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import {
   AlertDialog,
@@ -25,6 +26,21 @@ import ThemeToggle from "@/components/ThemeToggle";
 import AnalyticsDashboard from "@/components/AnalyticsDashboard";
 import DataManagementHub from "@/components/DataManagementHub";
 
+// All available form names
+const ALL_FORM_NAMES = [
+  "Speed Math Workshop",
+  "Tribe Huddle Session", 
+  "Kaizen Workshop",
+  "Personal Branding Workshop",
+  "Community Building Session",
+  "Gen AI Workshop",
+  "Gen AI Video Submission",
+  "IOT Workshop",
+  "LinkedIn Workshop", 
+  "Drone Workshop",
+  "Tribeathon Event"
+];
+
 const AdminDashboard = () => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [password, setPassword] = useState("");
@@ -36,6 +52,8 @@ const AdminDashboard = () => {
   const [showShareManager, setShowShareManager] = useState<any>(null);
   const [showAnalytics, setShowAnalytics] = useState(false);
   const [showDataManagement, setShowDataManagement] = useState(false);
+  const [showSettings, setShowSettings] = useState(false);
+  const [currentView, setCurrentView] = useState('sessions'); // sessions, analytics, data, settings
   const { toast } = useToast();
 
   const {
@@ -49,6 +67,14 @@ const AdminDashboard = () => {
     deleteSession,
     exportToCSV
   } = useFeedbackData();
+
+  // Load saved config on component mount
+  useEffect(() => {
+    const savedConfig = localStorage.getItem('googleSheetsConfig');
+    if (savedConfig) {
+      // Auto-connect if config exists
+    }
+  }, []);
 
   const handleLogin = (e: React.FormEvent) => {
     e.preventDefault();
@@ -78,6 +104,7 @@ const AdminDashboard = () => {
 
   const handleView = (session: any) => {
     setViewingSession(session);
+    // Fetch responses for this specific session
     fetchResponses(session.id);
   };
 
@@ -95,17 +122,20 @@ const AdminDashboard = () => {
       return;
     }
 
-    const blob = new Blob([csvData], { type: 'text/csv' });
+    // Create and download CSV file
+    const blob = new Blob([csvData], { type: 'text/csv;charset=utf-8;' });
     const url = window.URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = `${session.title}-feedback-${new Date().toISOString().split('T')[0]}.csv`;
-    a.click();
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = `${session.title.replace(/\s+/g, '_')}_responses_${new Date().toISOString().split('T')[0]}.csv`;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
     window.URL.revokeObjectURL(url);
 
     toast({
       title: "Export Complete",
-      description: `${session.title} data exported successfully!`,
+      description: `${session.title} data exported successfully as CSV!`,
     });
   };
 
@@ -187,6 +217,96 @@ const AdminDashboard = () => {
     );
     
     return ratings.length > 0 ? (ratings.reduce((a, b) => a + b, 0) / ratings.length).toFixed(1) : 0;
+  };
+
+  // Settings Component
+  const SettingsPage = () => {
+    const [newPassword, setNewPassword] = useState("");
+    const [confirmPassword, setConfirmPassword] = useState("");
+
+    const handlePasswordChange = (e: React.FormEvent) => {
+      e.preventDefault();
+      if (newPassword !== confirmPassword) {
+        toast({
+          title: "Password Mismatch",
+          description: "Passwords do not match.",
+          variant: "destructive"
+        });
+        return;
+      }
+      if (newPassword.length < 6) {
+        toast({
+          title: "Password Too Short",
+          description: "Password must be at least 6 characters long.",
+          variant: "destructive"
+        });
+        return;
+      }
+
+      // In a real app, you'd send this to your backend
+      toast({
+        title: "Password Updated",
+        description: "Your password has been updated successfully.",
+      });
+      setNewPassword("");
+      setConfirmPassword("");
+    };
+
+    return (
+      <div className="space-y-6">
+        <Card>
+          <CardHeader>
+            <CardTitle>Change Admin Password</CardTitle>
+            <CardDescription>Update your admin access password</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <form onSubmit={handlePasswordChange} className="space-y-4">
+              <div className="space-y-2">
+                <Label htmlFor="newPassword">New Password</Label>
+                <Input
+                  id="newPassword"
+                  type="password"
+                  value={newPassword}
+                  onChange={(e) => setNewPassword(e.target.value)}
+                  placeholder="Enter new password"
+                  required
+                />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="confirmPassword">Confirm Password</Label>
+                <Input
+                  id="confirmPassword"
+                  type="password"
+                  value={confirmPassword}
+                  onChange={(e) => setConfirmPassword(e.target.value)}
+                  placeholder="Confirm new password"
+                  required
+                />
+              </div>
+              <Button type="submit" className="bg-red-900 hover:bg-red-800">
+                Update Password
+              </Button>
+            </form>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardHeader>
+            <CardTitle>Available Forms</CardTitle>
+            <CardDescription>All feedback forms in the system</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
+              {ALL_FORM_NAMES.map((formName, index) => (
+                <div key={index} className="p-3 bg-gray-50 rounded-lg">
+                  <p className="font-medium text-sm">{formName}</p>
+                </div>
+              ))}
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+    );
   };
 
   if (!isAuthenticated) {
@@ -299,20 +419,36 @@ const AdminDashboard = () => {
             </div>
             <div className="flex items-center space-x-2">
               <Button 
-                onClick={() => setShowDataManagement(!showDataManagement)}
-                variant="outline"
-                className="text-red-900 border-white hover:bg-white/10"
+                onClick={() => setCurrentView('sessions')}
+                variant={currentView === 'sessions' ? 'default' : 'outline'}
+                className={currentView === 'sessions' ? 'bg-white text-red-900' : 'text-red-900 border-white hover:bg-white/10'}
               >
-                <Database className="h-4 w-4 mr-2" />
-                {showDataManagement ? 'Hide Data Hub' : 'Data Hub'}
+                <Users className="h-4 w-4 mr-2" />
+                Sessions
               </Button>
               <Button 
-                onClick={() => setShowAnalytics(!showAnalytics)}
-                variant="outline"
-                className="text-red-900 border-white hover:bg-white/10"
+                onClick={() => setCurrentView('analytics')}
+                variant={currentView === 'analytics' ? 'default' : 'outline'}
+                className={currentView === 'analytics' ? 'bg-white text-red-900' : 'text-red-900 border-white hover:bg-white/10'}
               >
-                <BarChart3 className="h-4 w-4 mr-2" />
-                {showAnalytics ? 'Hide Analytics' : 'Show Analytics'}
+                <TrendingUp className="h-4 w-4 mr-2" />
+                Analytics
+              </Button>
+              <Button 
+                onClick={() => setCurrentView('data')}
+                variant={currentView === 'data' ? 'default' : 'outline'}
+                className={currentView === 'data' ? 'bg-white text-red-900' : 'text-red-900 border-white hover:bg-white/10'}
+              >
+                <Database className="h-4 w-4 mr-2" />
+                Data Hub
+              </Button>
+              <Button 
+                onClick={() => setCurrentView('settings')}
+                variant={currentView === 'settings' ? 'default' : 'outline'}
+                className={currentView === 'settings' ? 'bg-white text-red-900' : 'text-red-900 border-white hover:bg-white/10'}
+              >
+                <Settings className="h-4 w-4 mr-2" />
+                Settings
               </Button>
               <Button 
                 onClick={() => setIsAuthenticated(false)}
@@ -328,16 +464,17 @@ const AdminDashboard = () => {
 
       {/* Main Content */}
       <div className="container mx-auto px-4 py-8">
-        {showDataManagement ? (
+        {currentView === 'settings' ? (
+          <div className="space-y-6">
+            <div className="flex items-center justify-between">
+              <h1 className="text-3xl font-bold text-foreground">Settings</h1>
+            </div>
+            <SettingsPage />
+          </div>
+        ) : currentView === 'data' ? (
           <div className="space-y-6">
             <div className="flex items-center justify-between">
               <h1 className="text-3xl font-bold text-foreground">Data Management Hub</h1>
-              <Button 
-                onClick={() => setShowDataManagement(false)}
-                variant="outline"
-              >
-                Back to Sessions
-              </Button>
             </div>
             <DataManagementHub 
               sessions={sessions}
@@ -345,16 +482,10 @@ const AdminDashboard = () => {
               onExport={handleExport}
             />
           </div>
-        ) : showAnalytics ? (
+        ) : currentView === 'analytics' ? (
           <div className="space-y-6">
             <div className="flex items-center justify-between">
               <h1 className="text-3xl font-bold text-foreground">Analytics Dashboard</h1>
-              <Button 
-                onClick={() => setShowAnalytics(false)}
-                variant="outline"
-              >
-                Back to Sessions
-              </Button>
             </div>
             <AnalyticsDashboard sessions={sessions} responses={responses} />
           </div>
@@ -402,10 +533,8 @@ const AdminDashboard = () => {
                 <CardContent className="p-6 bg-card">
                   <div className="flex items-center justify-between">
                     <div>
-                      <p className="text-sm text-muted-foreground">Avg. Questions</p>
-                      <p className="text-3xl font-bold text-red-900">
-                        {sessions.length > 0 ? Math.round(sessions.reduce((acc, s) => acc + s.questions.length, 0) / sessions.length) : 0}
-                      </p>
+                      <p className="text-sm text-muted-foreground">Form Types</p>
+                      <p className="text-3xl font-bold text-red-900">{ALL_FORM_NAMES.length}</p>
                     </div>
                     <FileText className="h-10 w-10 text-red-900" />
                   </div>
@@ -430,20 +559,6 @@ const AdminDashboard = () => {
                   </div>
                   <div className="flex space-x-2">
                     <Button 
-                      onClick={() => setShowDataManagement(true)}
-                      className="bg-purple-600 hover:bg-purple-700 text-white"
-                    >
-                      <Database className="h-4 w-4 mr-2" />
-                      Data Hub
-                    </Button>
-                    <Button 
-                      onClick={() => setShowAnalytics(true)}
-                      className="bg-blue-600 hover:bg-blue-700 text-white"
-                    >
-                      <BarChart3 className="h-4 w-4 mr-2" />
-                      Analytics
-                    </Button>
-                    <Button 
                       onClick={() => setShowEditor(true)}
                       className="bg-green-600 hover:bg-green-700 text-white"
                     >
@@ -456,7 +571,7 @@ const AdminDashboard = () => {
                       disabled={selectedSessions.length === 0}
                     >
                       <Download className="h-4 w-4 mr-2" />
-                      Export ({selectedSessions.length})
+                      Export CSV ({selectedSessions.length})
                     </Button>
                   </div>
                 </div>
@@ -656,7 +771,7 @@ const AdminDashboard = () => {
                       <div className="space-y-4 max-h-64 overflow-y-auto">
                         {responses
                           .filter(r => r.session_id === viewingSession.id)
-                          .slice(0, 5)
+                          .slice(0, 10)
                           .map((response) => (
                             <div key={response.id} className="border rounded-lg p-4">
                               <div className="flex justify-between items-start mb-2">

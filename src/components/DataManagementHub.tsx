@@ -4,8 +4,9 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { FeedbackSession, FeedbackResponse } from '@/hooks/useFeedbackData';
 import GoogleSheetsConnector from './GoogleSheetsConnector';
+import GoogleSheetsViewer from './GoogleSheetsViewer';
 import EnhancedExportOptions from './EnhancedExportOptions';
-import { Database, FileSpreadsheet, Cloud } from 'lucide-react';
+import { Database, FileSpreadsheet, Cloud, Eye } from 'lucide-react';
 
 interface DataManagementHubProps {
   sessions: FeedbackSession[];
@@ -68,9 +69,10 @@ const DataManagementHub = ({ sessions, responses, onExport }: DataManagementHubP
         </CardHeader>
         <CardContent>
           <Tabs defaultValue="export" className="space-y-4">
-            <TabsList className="grid w-full grid-cols-2">
+            <TabsList className="grid w-full grid-cols-3">
               <TabsTrigger value="export">Export & Download</TabsTrigger>
               <TabsTrigger value="integration">Google Sheets</TabsTrigger>
+              <TabsTrigger value="viewer">View Sheets</TabsTrigger>
             </TabsList>
 
             <TabsContent value="export" className="space-y-4">
@@ -112,6 +114,47 @@ const DataManagementHub = ({ sessions, responses, onExport }: DataManagementHubP
                       <h4 className="font-semibold mb-2">Data Visualization</h4>
                       <p className="text-muted-foreground">
                         Create charts and graphs directly in Google Sheets
+                      </p>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+            </TabsContent>
+
+            <TabsContent value="viewer" className="space-y-4">
+              <GoogleSheetsViewer />
+              
+              <Card>
+                <CardHeader>
+                  <CardTitle className="text-lg flex items-center space-x-2">
+                    <Eye className="h-5 w-5" />
+                    <span>Viewer Features</span>
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
+                    <div>
+                      <h4 className="font-semibold mb-2">Direct Access</h4>
+                      <p className="text-muted-foreground">
+                        View Google Sheets data directly on your website
+                      </p>
+                    </div>
+                    <div>
+                      <h4 className="font-semibold mb-2">Real-time Updates</h4>
+                      <p className="text-muted-foreground">
+                        Refresh data to see the latest changes from your sheets
+                      </p>
+                    </div>
+                    <div>
+                      <h4 className="font-semibold mb-2">Export Options</h4>
+                      <p className="text-muted-foreground">
+                        Download the viewed data as CSV for local use
+                      </p>
+                    </div>
+                    <div>
+                      <h4 className="font-semibold mb-2">Custom Ranges</h4>
+                      <p className="text-muted-foreground">
+                        Specify exactly which data range you want to view
                       </p>
                     </div>
                   </div>

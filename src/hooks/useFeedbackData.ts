@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { Database } from '@/integrations/supabase/types';
@@ -158,31 +157,34 @@ export const useFeedbackData = () => {
       return null;
     }
 
+    // Create headers
     const headers = ['Name', 'Email', 'Bootcamp ID', 'Submitted At'];
     session.questions.forEach((q: any) => {
-      headers.push(q.question);
+      headers.push(q.question || `Question ${q.id}`);
     });
 
-    const csvData = [
-      headers.join(','),
-      ...sessionResponses.map(response => {
-        const row = [
-          response.user_name,
-          response.user_email,
-          response.bootcamp_id,
-          new Date(response.submitted_at).toLocaleString()
-        ];
-        
-        session.questions.forEach((q: any) => {
-          const answer = response.responses[q.id] || '';
-          row.push(`"${String(answer).replace(/"/g, '""')}"`);
-        });
-        
-        return row.join(',');
-      })
-    ];
+    // Create CSV content
+    const csvRows = [headers.join(',')];
+    
+    sessionResponses.forEach(response => {
+      const row = [
+        `"${response.user_name || ''}"`,
+        `"${response.user_email || ''}"`,
+        `"${response.bootcamp_id || ''}"`,
+        `"${new Date(response.submitted_at).toLocaleString()}"`
+      ];
+      
+      session.questions.forEach((q: any) => {
+        const answer = response.responses[q.id] || '';
+        // Escape quotes and wrap in quotes
+        const escapedAnswer = String(answer).replace(/"/g, '""');
+        row.push(`"${escapedAnswer}"`);
+      });
+      
+      csvRows.push(row.join(','));
+    });
 
-    return csvData.join('\n');
+    return csvRows.join('\n');
   };
 
   useEffect(() => {
