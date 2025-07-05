@@ -85,37 +85,37 @@ const Index = () => {
             </Card>
           </div>
 
-          {/* Features Section */}
+          {/* Enhanced Welcome Section */}
           <div className="bg-white rounded-xl shadow-lg p-8 border border-gray-200">
             <h3 className="text-2xl font-bold text-black mb-6 text-center">
-              System Features
+              Transform Learning Through Feedback
             </h3>
             <div className="grid md:grid-cols-3 gap-6">
               <div className="text-center">
                 <div className="bg-red-100 rounded-full w-16 h-16 flex items-center justify-center mx-auto mb-4">
                   <MessageSquare className="h-8 w-8 text-red-900" />
                 </div>
-                <h4 className="font-semibold text-black mb-2">Multi-Session Support</h4>
+                <h4 className="font-semibold text-black mb-2">Comprehensive Sessions</h4>
                 <p className="text-black text-sm">
-                  Feedback forms for all bootcamp sessions including workshops and special events
+                  Speed Math, AI Workshops, Personal Branding, and 8+ specialized sessions
                 </p>
               </div>
               <div className="text-center">
                 <div className="bg-gray-100 rounded-full w-16 h-16 flex items-center justify-center mx-auto mb-4">
                   <MessageSquare className="h-8 w-8 text-black" />
                 </div>
-                <h4 className="font-semibold text-black mb-2">Mobile Friendly</h4>
+                <h4 className="font-semibold text-black mb-2">Multi-Location Support</h4>
                 <p className="text-black text-sm">
-                  Fully responsive design that works perfectly on all devices
+                  Seamless feedback collection across Pune, Hyderabad, and Noida locations
                 </p>
               </div>
               <div className="text-center">
                 <div className="bg-red-100 rounded-full w-16 h-16 flex items-center justify-center mx-auto mb-4">
                   <Users className="h-8 w-8 text-red-900" />
                 </div>
-                <h4 className="font-semibold text-black mb-2">Real-time Analytics</h4>
+                <h4 className="font-semibold text-black mb-2">Advanced Analytics</h4>
                 <p className="text-black text-sm">
-                  Instant feedback collection with comprehensive reporting dashboard
+                  Power BI integration with real-time dashboards and professional reporting
                 </p>
               </div>
             </div>

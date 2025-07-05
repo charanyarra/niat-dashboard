@@ -20,11 +20,15 @@ import {
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
 import { useFeedbackData } from "@/hooks/useFeedbackData";
+import { useSessionManager } from "@/hooks/useSessionManager";
 import SessionEditor from "@/components/SessionEditor";
 import ShareableLinkManager from "@/components/ShareableLinkManager";
 import ThemeToggle from "@/components/ThemeToggle";
 import AnalyticsDashboard from "@/components/AnalyticsDashboard";
+import SessionAnalyticsDashboard from "@/components/SessionAnalyticsDashboard";
 import DataManagementHub from "@/components/DataManagementHub";
+import PowerBIIntegration from "@/components/PowerBIIntegration";
+import ProfessionalQRCode from "@/components/ProfessionalQRCode";
 
 // All available form names
 const ALL_FORM_NAMES = [
@@ -53,7 +57,8 @@ const AdminDashboard = () => {
   const [showAnalytics, setShowAnalytics] = useState(false);
   const [showDataManagement, setShowDataManagement] = useState(false);
   const [showSettings, setShowSettings] = useState(false);
-  const [currentView, setCurrentView] = useState('sessions'); // sessions, analytics, data, settings
+  const [currentView, setCurrentView] = useState('sessions'); // sessions, analytics, data, settings, session-analytics, powerbi
+  const [selectedAnalyticsSession, setSelectedAnalyticsSession] = useState<string>('');
   const { toast } = useToast();
 
   const {
@@ -68,13 +73,27 @@ const AdminDashboard = () => {
     exportToCSV
   } = useFeedbackData();
 
-  // Load saved config on component mount
+  const {
+    initializePredefinedSessions,
+    getPredefinedSessionsStatus,
+    isInitializing
+  } = useSessionManager();
+
+  // Load saved config and initialize sessions on component mount
   useEffect(() => {
     const savedConfig = localStorage.getItem('googleSheetsConfig');
     if (savedConfig) {
       // Auto-connect if config exists
     }
-  }, []);
+    
+    // Initialize predefined sessions if not already created
+    if (sessions.length > 0) {
+      const status = getPredefinedSessionsStatus();
+      if (status.missing > 0) {
+        initializePredefinedSessions();
+      }
+    }
+  }, [sessions.length]);
 
   const handleLogin = (e: React.FormEvent) => {
     e.preventDefault();
@@ -417,11 +436,12 @@ const AdminDashboard = () => {
                 className="h-8 w-auto"
               />
             </div>
-            <div className="flex items-center space-x-2">
+            <div className="flex items-center space-x-2 overflow-x-auto">
               <Button 
                 onClick={() => setCurrentView('sessions')}
                 variant={currentView === 'sessions' ? 'default' : 'outline'}
                 className={currentView === 'sessions' ? 'bg-white text-red-900' : 'text-red-900 border-white hover:bg-white/10'}
+                size="sm"
               >
                 <Users className="h-4 w-4 mr-2" />
                 Sessions
@@ -430,14 +450,34 @@ const AdminDashboard = () => {
                 onClick={() => setCurrentView('analytics')}
                 variant={currentView === 'analytics' ? 'default' : 'outline'}
                 className={currentView === 'analytics' ? 'bg-white text-red-900' : 'text-red-900 border-white hover:bg-white/10'}
+                size="sm"
               >
                 <TrendingUp className="h-4 w-4 mr-2" />
-                Analytics
+                Overview
+              </Button>
+              <Button 
+                onClick={() => setCurrentView('session-analytics')}
+                variant={currentView === 'session-analytics' ? 'default' : 'outline'}
+                className={currentView === 'session-analytics' ? 'bg-white text-red-900' : 'text-red-900 border-white hover:bg-white/10'}
+                size="sm"
+              >
+                <BarChart3 className="h-4 w-4 mr-2" />
+                Session Reports
+              </Button>
+              <Button 
+                onClick={() => setCurrentView('powerbi')}
+                variant={currentView === 'powerbi' ? 'default' : 'outline'}
+                className={currentView === 'powerbi' ? 'bg-white text-red-900' : 'text-red-900 border-white hover:bg-white/10'}
+                size="sm"
+              >
+                <BarChart3 className="h-4 w-4 mr-2" />
+                Power BI
               </Button>
               <Button 
                 onClick={() => setCurrentView('data')}
                 variant={currentView === 'data' ? 'default' : 'outline'}
                 className={currentView === 'data' ? 'bg-white text-red-900' : 'text-red-900 border-white hover:bg-white/10'}
+                size="sm"
               >
                 <Database className="h-4 w-4 mr-2" />
                 Data Hub
@@ -446,6 +486,7 @@ const AdminDashboard = () => {
                 onClick={() => setCurrentView('settings')}
                 variant={currentView === 'settings' ? 'default' : 'outline'}
                 className={currentView === 'settings' ? 'bg-white text-red-900' : 'text-red-900 border-white hover:bg-white/10'}
+                size="sm"
               >
                 <Settings className="h-4 w-4 mr-2" />
                 Settings
@@ -454,6 +495,7 @@ const AdminDashboard = () => {
                 onClick={() => setIsAuthenticated(false)}
                 variant="outline"
                 className="text-red-900 border-white hover:bg-white/10"
+                size="sm"
               >
                 Logout
               </Button>
@@ -485,9 +527,23 @@ const AdminDashboard = () => {
         ) : currentView === 'analytics' ? (
           <div className="space-y-6">
             <div className="flex items-center justify-between">
-              <h1 className="text-3xl font-bold text-foreground">Analytics Dashboard</h1>
+              <h1 className="text-3xl font-bold text-foreground">Analytics Overview</h1>
             </div>
             <AnalyticsDashboard sessions={sessions} responses={responses} />
+          </div>
+        ) : currentView === 'session-analytics' ? (
+          <div className="space-y-6">
+            <div className="flex items-center justify-between">
+              <h1 className="text-3xl font-bold text-foreground">Session Analytics</h1>
+            </div>
+            <SessionAnalyticsDashboard sessions={sessions} responses={responses} />
+          </div>
+        ) : currentView === 'powerbi' ? (
+          <div className="space-y-6">
+            <div className="flex items-center justify-between">
+              <h1 className="text-3xl font-bold text-foreground">Power BI Integration</h1>
+            </div>
+            <PowerBIIntegration sessions={sessions} responses={responses} />
           </div>
         ) : (
           <>

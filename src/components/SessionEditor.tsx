@@ -11,7 +11,7 @@ import { FeedbackSession } from '@/hooks/useFeedbackData';
 
 interface Question {
   id: string;
-  type: 'text' | 'textarea' | 'rating' | 'select';
+  type: 'text' | 'textarea' | 'rating' | 'select' | 'location';
   question: string;
   required: boolean;
   options?: string[];
@@ -164,10 +164,22 @@ const SessionEditor = ({ session, onSave, onCancel }: SessionEditorProps) => {
                           <SelectItem value="textarea">Long Text</SelectItem>
                           <SelectItem value="rating">Rating (1-5)</SelectItem>
                           <SelectItem value="select">Multiple Choice</SelectItem>
+                          <SelectItem value="location">Location (Pune/Hyderabad/Noida)</SelectItem>
                         </SelectContent>
                       </Select>
                     </div>
                   </div>
+
+                  {question.type === 'location' && (
+                    <div className="space-y-2">
+                      <Label>Available Locations</Label>
+                      <div className="p-2 bg-muted rounded-lg">
+                        <p className="text-sm text-muted-foreground">
+                          Pune, Hyderabad, Noida (automatically configured)
+                        </p>
+                      </div>
+                    </div>
+                  )}
 
                   <div className="flex items-center space-x-2">
                     <input
