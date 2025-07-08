@@ -27,6 +27,7 @@ import ThemeToggle from "@/components/ThemeToggle";
 import AnalyticsDashboard from "@/components/AnalyticsDashboard";
 import SessionAnalyticsDashboard from "@/components/SessionAnalyticsDashboard";
 import DataManagementHub from "@/components/DataManagementHub";
+import AdvancedDataHub from "@/components/AdvancedDataHub";
 import PowerBIIntegration from "@/components/PowerBIIntegration";
 import ProfessionalQRCode from "@/components/ProfessionalQRCode";
 
@@ -483,6 +484,15 @@ const AdminDashboard = () => {
                 Data Hub
               </Button>
               <Button 
+                onClick={() => setCurrentView('advanced-data')}
+                variant={currentView === 'advanced-data' ? 'default' : 'outline'}
+                className={currentView === 'advanced-data' ? 'bg-white text-red-900' : 'text-red-900 border-white hover:bg-white/10'}
+                size="sm"
+              >
+                <BarChart3 className="h-4 w-4 mr-2" />
+                Advanced Analytics
+              </Button>
+              <Button 
                 onClick={() => setCurrentView('settings')}
                 variant={currentView === 'settings' ? 'default' : 'outline'}
                 className={currentView === 'settings' ? 'bg-white text-red-900' : 'text-red-900 border-white hover:bg-white/10'}
@@ -544,6 +554,13 @@ const AdminDashboard = () => {
               <h1 className="text-3xl font-bold text-foreground">Power BI Integration</h1>
             </div>
             <PowerBIIntegration sessions={sessions} responses={responses} />
+          </div>
+        ) : currentView === 'advanced-data' ? (
+          <div className="space-y-6">
+            <div className="flex items-center justify-between">
+              <h1 className="text-3xl font-bold text-foreground">Advanced Data Analytics</h1>
+            </div>
+            <AdvancedDataHub />
           </div>
         ) : (
           <>
