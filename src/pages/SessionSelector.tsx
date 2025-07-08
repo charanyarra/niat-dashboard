@@ -30,7 +30,8 @@ const SessionSelector = () => {
     { value: "iot-workshop", label: "IOT Workshop Feedback" },
     { value: "linkedin-workshop", label: "LinkedIn Workshop Feedback Form" },
     { value: "drone-workshop", label: "Drone Workshop Feedback Form" },
-    { value: "tribeathon", label: "Tribeathon Feedback Form" }
+    { value: "tribeathon", label: "Tribeathon Feedback Form" },
+    { value: "blockchain-workshop", label: "Blockchain Workshop Feedback Form" }
   ];
 
   const handleSubmit = (e: React.FormEvent) => {

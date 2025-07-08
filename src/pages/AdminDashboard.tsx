@@ -47,7 +47,8 @@ const ALL_FORM_NAMES = [
   "IOT Workshop",
   "LinkedIn Workshop", 
   "Drone Workshop",
-  "Tribeathon Event"
+  "Tribeathon Event",
+  "Blockchain Workshop"
 ];
 
 const AdminDashboard = () => {

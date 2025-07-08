@@ -134,6 +134,20 @@ const PREDEFINED_SESSIONS = [
       { id: "networking", type: "rating", question: "Networking opportunities and connections made", required: true },
       { id: "impact", type: "textarea", question: "What impact will this event have on your journey?", required: false }
     ]
+  },
+  {
+    title: "Blockchain Workshop",
+    description: "Comprehensive blockchain technology workshop covering fundamentals, smart contracts, and decentralized applications.",
+    questions: [
+      { id: "location", type: "location", question: "Select your location", required: true },
+      { id: "technical_depth", type: "rating", question: "How would you rate the technical depth of blockchain concepts?", required: true },
+      { id: "practical_rating", type: "rating", question: "How practical and hands-on was the workshop?", required: true },
+      { id: "interesting_concepts", type: "textarea", question: "Which blockchain concepts interested you most?", required: true },
+      { id: "future_projects", type: "textarea", question: "What blockchain projects would you like to work on?", required: true },
+      { id: "confidence_level", type: "rating", question: "How confident do you feel about blockchain development?", required: true },
+      { id: "additional_resources", type: "textarea", question: "What additional resources would help you?", required: false },
+      { id: "improvements", type: "textarea", question: "How can we improve future workshops?", required: false }
+    ]
   }
 ];
 
