@@ -8,6 +8,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { useToast } from "@/hooks/use-toast";
 import { ArrowLeft } from "lucide-react";
 import { Link } from "react-router-dom";
+import ThemeToggle from "@/components/ThemeToggle";
 
 const SessionSelector = () => {
   const [formData, setFormData] = useState({
@@ -67,7 +68,8 @@ const SessionSelector = () => {
               <ArrowLeft className="h-5 w-5" />
               <span>Back to Home</span>
             </Link>
-            <div className="flex items-center space-x-3">
+            <div className="flex items-center space-x-3 ml-auto">
+              <ThemeToggle />
               <img 
                 src="/lovable-uploads/8b444953-4cf5-4245-a883-10795b1e23c3.png" 
                 alt="NIAT Logo" 

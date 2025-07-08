@@ -34,6 +34,8 @@ import AdminSettings from "@/components/AdminSettings";
 import CombinedAnalytics from "@/components/CombinedAnalytics";
 import AIDashboardCombined from "@/components/AIDashboardCombined";
 import AdvancedSettings from "@/components/AdvancedSettings";
+import RealTimeNotifications from "@/components/RealTimeNotifications";
+import LiveDashboard from "@/components/LiveDashboard";
 
 // All available form names
 const ALL_FORM_NAMES = [
@@ -48,7 +50,10 @@ const ALL_FORM_NAMES = [
   "LinkedIn Workshop", 
   "Drone Workshop",
   "Tribeathon Event",
-  "Blockchain Workshop"
+  "Blockchain Workshop",
+  "Machine Learning Workshop",
+  "Cybersecurity Fundamentals",
+  "Cloud Computing Workshop"
 ];
 
 const AdminDashboard = () => {
@@ -65,6 +70,7 @@ const AdminDashboard = () => {
   const [showSettings, setShowSettings] = useState(false);
   const [currentView, setCurrentView] = useState('sessions'); // sessions, analytics, data, settings, session-analytics, powerbi
   const [selectedAnalyticsSession, setSelectedAnalyticsSession] = useState<string>('');
+  const [realTimeResponses, setRealTimeResponses] = useState<any[]>([]);
   const { toast } = useToast();
 
   const {
@@ -101,6 +107,12 @@ const AdminDashboard = () => {
     }
   }, [sessions.length]);
 
+  // Handle real-time response updates
+  const handleNewResponse = (newResponse: any) => {
+    setRealTimeResponses(prev => [newResponse, ...prev]);
+    // Refresh data
+    fetchResponses();
+  };
   const handleLogin = (e: React.FormEvent) => {
     e.preventDefault();
     if (password === "Admin123") {
@@ -434,7 +446,7 @@ const AdminDashboard = () => {
               <ArrowLeft className="h-5 w-5" />
               <span>Back to Home</span>
             </Link>
-            <div className="flex items-center space-x-3">
+            <div className="flex items-center space-x-3 ml-auto">
               <ThemeToggle />
               <img 
                 src="/lovable-uploads/8b444953-4cf5-4245-a883-10795b1e23c3.png" 
@@ -442,7 +454,7 @@ const AdminDashboard = () => {
                 className="h-8 w-auto"
               />
             </div>
-            <div className="flex items-center space-x-2 overflow-x-auto">
+            <div className="flex items-center space-x-2 overflow-x-auto ml-4">
               <Button 
                 onClick={() => setCurrentView('sessions')}
                 variant={currentView === 'sessions' ? 'default' : 'outline'}
@@ -451,6 +463,15 @@ const AdminDashboard = () => {
               >
                 <Users className="h-4 w-4 mr-2" />
                 Sessions
+              </Button>
+              <Button 
+                onClick={() => setCurrentView('live-dashboard')}
+                variant={currentView === 'live-dashboard' ? 'default' : 'outline'}
+                className={currentView === 'live-dashboard' ? 'bg-white text-red-900' : 'text-red-900 border-white hover:bg-white/10'}
+                size="sm"
+              >
+                <Activity className="h-4 w-4 mr-2" />
+                Live Dashboard
               </Button>
               <Button 
                 onClick={() => setCurrentView('analytics')}
@@ -512,6 +533,11 @@ const AdminDashboard = () => {
 
       {/* Main Content */}
       <div className="container mx-auto px-4 py-8">
+        {/* Real-time Notifications */}
+        <div className="mb-6">
+          <RealTimeNotifications onNewResponse={handleNewResponse} />
+        </div>
+        
         {currentView === 'sessions' ? (
           <>
             {/* Statistics Cards */}
@@ -565,6 +591,17 @@ const AdminDashboard = () => {
               </Card>
             </div>
 
+        ) : currentView === 'live-dashboard' ? (
+          <div className="space-y-6">
+            <div className="flex items-center justify-between">
+              <h1 className="text-3xl font-bold text-foreground">Live Dashboard</h1>
+              <div className="flex items-center space-x-2">
+                <div className="w-3 h-3 bg-green-500 rounded-full animate-pulse"></div>
+                <span className="text-sm font-medium text-green-600">Real-time Active</span>
+              </div>
+            </div>
+            <LiveDashboard />
+          </div>
             {/* Search and Actions */}
             <Card className="shadow-lg border-0 mb-6">
               <CardContent className="p-6 bg-card">
