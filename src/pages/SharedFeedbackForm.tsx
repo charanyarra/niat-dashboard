@@ -309,6 +309,19 @@ This form can be accessed at: ${window.location.origin}/feedback/${session.share
                         ))}
                       </RadioGroup>
                     )}
+
+                    {question.type === 'location' && (
+                      <RadioGroup name={question.id} required={question.required}>
+                        {['Pune', 'Hyderabad', 'Noida'].map((location) => (
+                          <div key={location} className="flex items-center space-x-2">
+                            <RadioGroupItem value={location} id={`${question.id}-${location}`} />
+                            <Label htmlFor={`${question.id}-${location}`}>
+                              {location}
+                            </Label>
+                          </div>
+                        ))}
+                      </RadioGroup>
+                    )}
                   </div>
                 ))}
                 
