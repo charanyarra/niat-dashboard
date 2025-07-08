@@ -63,7 +63,7 @@ const AdminDashboard = () => {
   const [showAnalytics, setShowAnalytics] = useState(false);
   const [showDataManagement, setShowDataManagement] = useState(false);
   const [showSettings, setShowSettings] = useState(false);
-  const [currentView, setCurrentView] = useState('ai-dashboard'); // ai-dashboard, sessions, analytics, data, settings, session-analytics, powerbi, advanced-settings
+  const [currentView, setCurrentView] = useState('sessions'); // sessions, analytics, data, settings, session-analytics, powerbi
   const [selectedAnalyticsSession, setSelectedAnalyticsSession] = useState<string>('');
   const { toast } = useToast();
 
@@ -444,15 +444,6 @@ const AdminDashboard = () => {
             </div>
             <div className="flex items-center space-x-2 overflow-x-auto">
               <Button 
-                onClick={() => setCurrentView('ai-dashboard')}
-                variant={currentView === 'ai-dashboard' ? 'default' : 'outline'}
-                className={currentView === 'ai-dashboard' ? 'bg-white text-red-900' : 'text-red-900 border-white hover:bg-white/10'}
-                size="sm"
-              >
-                <Brain className="h-4 w-4 mr-2" />
-                AI Dashboard
-              </Button>
-              <Button 
                 onClick={() => setCurrentView('sessions')}
                 variant={currentView === 'sessions' ? 'default' : 'outline'}
                 className={currentView === 'sessions' ? 'bg-white text-red-900' : 'text-red-900 border-white hover:bg-white/10'}
@@ -507,15 +498,6 @@ const AdminDashboard = () => {
                 Settings
               </Button>
               <Button 
-                onClick={() => setCurrentView('advanced-settings')}
-                variant={currentView === 'advanced-settings' ? 'default' : 'outline'}
-                className={currentView === 'advanced-settings' ? 'bg-white text-red-900' : 'text-red-900 border-white hover:bg-white/10'}
-                size="sm"
-              >
-                <Settings className="h-4 w-4 mr-2" />
-                Advanced Settings
-              </Button>
-              <Button 
                 onClick={() => setIsAuthenticated(false)}
                 variant="outline"
                 className="text-red-900 border-white hover:bg-white/10"
@@ -530,21 +512,7 @@ const AdminDashboard = () => {
 
       {/* Main Content */}
       <div className="container mx-auto px-4 py-8">
-        {currentView === 'ai-dashboard' ? (
-          <div className="space-y-6">
-            <div className="flex items-center justify-between">
-              <h1 className="text-3xl font-bold text-foreground">AI-Powered Dashboard</h1>
-            </div>
-            <AIDashboardCombined sessions={sessions} responses={responses} />
-          </div>
-        ) : currentView === 'advanced-settings' ? (
-          <div className="space-y-6">
-            <div className="flex items-center justify-between">
-              <h1 className="text-3xl font-bold text-foreground">Advanced Settings</h1>
-            </div>
-            <AdvancedSettings />
-          </div>
-        ) : currentView === 'sessions' ? (
+        {currentView === 'sessions' ? (
           <>
             {/* Statistics Cards */}
             <div className="grid md:grid-cols-4 gap-6 mb-8">
@@ -879,9 +847,31 @@ const AdminDashboard = () => {
         ) : currentView === 'settings' ? (
           <div className="space-y-6">
             <div className="flex items-center justify-between">
-              <h1 className="text-3xl font-bold text-foreground">Admin Settings</h1>
+              <h1 className="text-3xl font-bold text-foreground">Settings & Configuration</h1>
             </div>
-            <AdminSettings />
+            <div className="space-y-8">
+              {/* AI Dashboard Section */}
+              <Card>
+                <CardHeader>
+                  <CardTitle className="flex items-center space-x-2">
+                    <Brain className="h-5 w-5 text-purple-600" />
+                    <span>AI-Powered Analytics</span>
+                  </CardTitle>
+                  <CardDescription>
+                    Advanced AI insights and dashboard analytics
+                  </CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <AIDashboardCombined sessions={sessions} responses={responses} />
+                </CardContent>
+              </Card>
+              
+              {/* Admin Settings */}
+              <AdminSettings />
+              
+              {/* Advanced Settings */}
+              <AdvancedSettings />
+            </div>
           </div>
         ) : currentView === 'data' ? (
           <div className="space-y-6">
