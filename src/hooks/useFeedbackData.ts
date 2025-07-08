@@ -175,7 +175,7 @@ export const useFeedbackData = () => {
       ];
       
       session.questions.forEach((q: any) => {
-        const answer = response.responses[q.id] || '';
+        const answer = response.responses[q.id] || response.responses[q.question] || '';
         // Escape quotes and wrap in quotes
         const escapedAnswer = String(answer).replace(/"/g, '""');
         row.push(`"${escapedAnswer}"`);

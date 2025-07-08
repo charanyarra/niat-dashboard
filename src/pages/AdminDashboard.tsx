@@ -30,6 +30,8 @@ import DataManagementHub from "@/components/DataManagementHub";
 import AdvancedDataHub from "@/components/AdvancedDataHub";
 import PowerBIIntegration from "@/components/PowerBIIntegration";
 import ProfessionalQRCode from "@/components/ProfessionalQRCode";
+import AdminSettings from "@/components/AdminSettings";
+import EnhancedAnalytics from "@/components/EnhancedAnalytics";
 
 // All available form names
 const ALL_FORM_NAMES = [
@@ -58,7 +60,7 @@ const AdminDashboard = () => {
   const [showAnalytics, setShowAnalytics] = useState(false);
   const [showDataManagement, setShowDataManagement] = useState(false);
   const [showSettings, setShowSettings] = useState(false);
-  const [currentView, setCurrentView] = useState('sessions'); // sessions, analytics, data, settings, session-analytics, powerbi
+  const [currentView, setCurrentView] = useState('sessions'); // sessions, analytics, data, settings, session-analytics, powerbi, enhanced-analytics
   const [selectedAnalyticsSession, setSelectedAnalyticsSession] = useState<string>('');
   const { toast } = useToast();
 
@@ -484,6 +486,15 @@ const AdminDashboard = () => {
                 Data Hub
               </Button>
               <Button 
+                onClick={() => setCurrentView('enhanced-analytics')}
+                variant={currentView === 'enhanced-analytics' ? 'default' : 'outline'}
+                className={currentView === 'enhanced-analytics' ? 'bg-white text-red-900' : 'text-red-900 border-white hover:bg-white/10'}
+                size="sm"
+              >
+                <TrendingUp className="h-4 w-4 mr-2" />
+                Enhanced Analytics
+              </Button>
+              <Button 
                 onClick={() => setCurrentView('advanced-data')}
                 variant={currentView === 'advanced-data' ? 'default' : 'outline'}
                 className={currentView === 'advanced-data' ? 'bg-white text-red-900' : 'text-red-900 border-white hover:bg-white/10'}
@@ -519,9 +530,9 @@ const AdminDashboard = () => {
         {currentView === 'settings' ? (
           <div className="space-y-6">
             <div className="flex items-center justify-between">
-              <h1 className="text-3xl font-bold text-foreground">Settings</h1>
+              <h1 className="text-3xl font-bold text-foreground">Admin Settings</h1>
             </div>
-            <SettingsPage />
+            <AdminSettings />
           </div>
         ) : currentView === 'data' ? (
           <div className="space-y-6">
@@ -554,6 +565,13 @@ const AdminDashboard = () => {
               <h1 className="text-3xl font-bold text-foreground">Power BI Integration</h1>
             </div>
             <PowerBIIntegration sessions={sessions} responses={responses} />
+          </div>
+        ) : currentView === 'enhanced-analytics' ? (
+          <div className="space-y-6">
+            <div className="flex items-center justify-between">
+              <h1 className="text-3xl font-bold text-foreground">Enhanced Analytics</h1>
+            </div>
+            <EnhancedAnalytics sessions={sessions} responses={responses} />
           </div>
         ) : currentView === 'advanced-data' ? (
           <div className="space-y-6">
