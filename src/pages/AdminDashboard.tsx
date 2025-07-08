@@ -32,6 +32,7 @@ import PowerBIIntegration from "@/components/PowerBIIntegration";
 import ProfessionalQRCode from "@/components/ProfessionalQRCode";
 import AdminSettings from "@/components/AdminSettings";
 import EnhancedAnalytics from "@/components/EnhancedAnalytics";
+import AIInsights from "@/components/AIInsights";
 
 // All available form names
 const ALL_FORM_NAMES = [
@@ -60,7 +61,7 @@ const AdminDashboard = () => {
   const [showAnalytics, setShowAnalytics] = useState(false);
   const [showDataManagement, setShowDataManagement] = useState(false);
   const [showSettings, setShowSettings] = useState(false);
-  const [currentView, setCurrentView] = useState('sessions'); // sessions, analytics, data, settings, session-analytics, powerbi, enhanced-analytics
+  const [currentView, setCurrentView] = useState('sessions'); // sessions, analytics, data, settings, session-analytics, powerbi, enhanced-analytics, ai-insights
   const [selectedAnalyticsSession, setSelectedAnalyticsSession] = useState<string>('');
   const { toast } = useToast();
 
@@ -504,6 +505,15 @@ const AdminDashboard = () => {
                 Advanced Analytics
               </Button>
               <Button 
+                onClick={() => setCurrentView('ai-insights')}
+                variant={currentView === 'ai-insights' ? 'default' : 'outline'}
+                className={currentView === 'ai-insights' ? 'bg-white text-red-900' : 'text-red-900 border-white hover:bg-white/10'}
+                size="sm"
+              >
+                <TrendingUp className="h-4 w-4 mr-2" />
+                AI Insights
+              </Button>
+              <Button 
                 onClick={() => setCurrentView('settings')}
                 variant={currentView === 'settings' ? 'default' : 'outline'}
                 className={currentView === 'settings' ? 'bg-white text-red-900' : 'text-red-900 border-white hover:bg-white/10'}
@@ -565,6 +575,13 @@ const AdminDashboard = () => {
               <h1 className="text-3xl font-bold text-foreground">Power BI Integration</h1>
             </div>
             <PowerBIIntegration sessions={sessions} responses={responses} />
+          </div>
+        ) : currentView === 'ai-insights' ? (
+          <div className="space-y-6">
+            <div className="flex items-center justify-between">
+              <h1 className="text-3xl font-bold text-foreground">AI Insights & Real-time Updates</h1>
+            </div>
+            <AIInsights sessions={sessions} responses={responses} />
           </div>
         ) : currentView === 'enhanced-analytics' ? (
           <div className="space-y-6">
