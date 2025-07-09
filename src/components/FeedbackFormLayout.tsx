@@ -4,8 +4,6 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { useToast } from "@/hooks/use-toast";
 import { ArrowLeft, CheckCircle } from "lucide-react";
-import { supabase } from "@/integrations/supabase/client";
-import ThemeToggle from "@/components/ThemeToggle";
 
 interface UserInfo {
   name: string;
@@ -23,7 +21,6 @@ interface FeedbackFormLayoutProps {
 const FeedbackFormLayout = ({ sessionTitle, sessionDescription, children, onSubmit }: FeedbackFormLayoutProps) => {
   const [userInfo, setUserInfo] = useState<UserInfo>({ name: "", email: "", bootcampId: "" });
   const [isSubmitted, setIsSubmitted] = useState(false);
-  const [isSubmitting, setIsSubmitting] = useState(false);
   const { toast } = useToast();
   const navigate = useNavigate();
 
@@ -38,55 +35,29 @@ const FeedbackFormLayout = ({ sessionTitle, sessionDescription, children, onSubm
     }
   }, [navigate]);
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    setIsSubmitting(true);
-    
-    try {
     const formData = new FormData(e.target as HTMLFormElement);
     const data = Object.fromEntries(formData.entries());
     
-      // Find the session by title
-      const { data: sessions, error: sessionError } = await supabase
-        .from('feedback_sessions')
-        .select('id')
-        .eq('title', sessionTitle)
-        .single();
+    // Add user info to the feedback data
+    const feedbackData = {
+      ...userInfo,
+      ...data,
+      sessionTitle,
+      submittedAt: new Date().toISOString()
+    };
 
-      if (sessionError) {
-        throw new Error('Session not found');
-      }
-
-      // Submit to Supabase
-      const { error: submitError } = await supabase
-        .from('feedback_responses')
-        .insert([{
-          session_id: sessions.id,
-          user_name: userInfo.name,
-          user_email: userInfo.email,
-          bootcamp_id: userInfo.bootcampId,
-          responses: data
-        }]);
-
-      if (submitError) {
-        throw submitError;
-      }
-
+    console.log("Feedback submitted:", feedbackData);
+    
+    // Call the onSubmit callback
+    onSubmit(feedbackData);
+    
     setIsSubmitted(true);
     toast({
       title: "Feedback Submitted Successfully!",
       description: "Thank you for your valuable feedback. It helps us improve our bootcamp sessions.",
     });
-    } catch (error) {
-      console.error('Error submitting feedback:', error);
-      toast({
-        title: "Submission Failed",
-        description: "There was an error submitting your feedback. Please try again.",
-        variant: "destructive"
-      });
-    } finally {
-      setIsSubmitting(false);
-    }
   };
 
   if (isSubmitted) {
@@ -127,8 +98,7 @@ const FeedbackFormLayout = ({ sessionTitle, sessionDescription, children, onSubm
               <ArrowLeft className="h-5 w-5" />
               <span>Back to Session Selector</span>
             </Link>
-            <div className="flex items-center space-x-3 ml-auto">
-              <ThemeToggle />
+            <div className="flex items-center space-x-3">
               <img 
                 src="/lovable-uploads/8b444953-4cf5-4245-a883-10795b1e23c3.png" 
                 alt="NIAT Logo" 
@@ -167,10 +137,9 @@ const FeedbackFormLayout = ({ sessionTitle, sessionDescription, children, onSubm
                 
                 <Button 
                   type="submit" 
-                  disabled={isSubmitting}
                   className="w-full bg-gradient-to-r from-red-900 to-red-800 hover:from-red-800 hover:to-red-700 text-white font-semibold py-3 rounded-lg transition-all duration-300 transform hover:scale-105"
                 >
-                  {isSubmitting ? 'Submitting...' : 'Submit Feedback'}
+                  Submit Feedback
                 </Button>
               </form>
             </CardContent>

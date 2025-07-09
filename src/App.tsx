@@ -22,7 +22,6 @@ import IOTWorkshopFeedback from "./pages/feedback/IOTWorkshopFeedback";
 import LinkedInWorkshopFeedback from "./pages/feedback/LinkedInWorkshopFeedback";
 import DroneWorkshopFeedback from "./pages/feedback/DroneWorkshopFeedback";
 import TribeathonFeedback from "./pages/feedback/TribeathonFeedback";
-import BlockchainWorkshopFeedback from "./pages/feedback/BlockchainWorkshopFeedback";
 
 const queryClient = new QueryClient();
 
@@ -51,7 +50,6 @@ const App = () => (
             <Route path="/feedback/linkedin-workshop" element={<LinkedInWorkshopFeedback />} />
             <Route path="/feedback/drone-workshop" element={<DroneWorkshopFeedback />} />
             <Route path="/feedback/tribeathon" element={<TribeathonFeedback />} />
-            <Route path="/feedback/blockchain-workshop" element={<BlockchainWorkshopFeedback />} />
             
             <Route path="*" element={<NotFound />} />
           </Routes>

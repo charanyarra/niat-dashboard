@@ -8,7 +8,6 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { useToast } from "@/hooks/use-toast";
 import { ArrowLeft } from "lucide-react";
 import { Link } from "react-router-dom";
-import ThemeToggle from "@/components/ThemeToggle";
 
 const SessionSelector = () => {
   const [formData, setFormData] = useState({
@@ -31,8 +30,7 @@ const SessionSelector = () => {
     { value: "iot-workshop", label: "IOT Workshop Feedback" },
     { value: "linkedin-workshop", label: "LinkedIn Workshop Feedback Form" },
     { value: "drone-workshop", label: "Drone Workshop Feedback Form" },
-    { value: "tribeathon", label: "Tribeathon Feedback Form" },
-    { value: "blockchain-workshop", label: "Blockchain Workshop Feedback Form" }
+    { value: "tribeathon", label: "Tribeathon Feedback Form" }
   ];
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -68,8 +66,7 @@ const SessionSelector = () => {
               <ArrowLeft className="h-5 w-5" />
               <span>Back to Home</span>
             </Link>
-            <div className="flex items-center space-x-3 ml-auto">
-              <ThemeToggle />
+            <div className="flex items-center space-x-3">
               <img 
                 src="/lovable-uploads/8b444953-4cf5-4245-a883-10795b1e23c3.png" 
                 alt="NIAT Logo" 

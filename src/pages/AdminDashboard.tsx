@@ -6,7 +6,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useToast } from "@/hooks/use-toast";
 import { Link } from "react-router-dom";
-import { ArrowLeft, BarChart3, Download, Eye, Lock, Users, Edit, Trash2, Search, Filter, FileText, Plus, Share2, Database, Settings, TrendingUp, Brain } from "lucide-react";
+import { ArrowLeft, BarChart3, Download, Eye, Lock, Users, Edit, Trash2, Search, Filter, FileText, Plus, Share2, Database, Settings, TrendingUp } from "lucide-react";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import {
   AlertDialog,
@@ -31,11 +31,10 @@ import AdvancedDataHub from "@/components/AdvancedDataHub";
 import PowerBIIntegration from "@/components/PowerBIIntegration";
 import ProfessionalQRCode from "@/components/ProfessionalQRCode";
 import AdminSettings from "@/components/AdminSettings";
-import CombinedAnalytics from "@/components/CombinedAnalytics";
-import AIDashboardCombined from "@/components/AIDashboardCombined";
+import EnhancedAnalytics from "@/components/EnhancedAnalytics";
+import AIInsights from "@/components/AIInsights";
+import AIDashboard from "@/components/AIDashboard";
 import AdvancedSettings from "@/components/AdvancedSettings";
-import RealTimeNotifications from "@/components/RealTimeNotifications";
-import LiveDashboard from "@/components/LiveDashboard";
 
 // All available form names
 const ALL_FORM_NAMES = [
@@ -49,11 +48,7 @@ const ALL_FORM_NAMES = [
   "IOT Workshop",
   "LinkedIn Workshop", 
   "Drone Workshop",
-  "Tribeathon Event",
-  "Blockchain Workshop",
-  "Machine Learning Workshop",
-  "Cybersecurity Fundamentals",
-  "Cloud Computing Workshop"
+  "Tribeathon Event"
 ];
 
 const AdminDashboard = () => {
@@ -68,9 +63,8 @@ const AdminDashboard = () => {
   const [showAnalytics, setShowAnalytics] = useState(false);
   const [showDataManagement, setShowDataManagement] = useState(false);
   const [showSettings, setShowSettings] = useState(false);
-  const [currentView, setCurrentView] = useState('sessions'); // sessions, analytics, data, settings, session-analytics, powerbi
+  const [currentView, setCurrentView] = useState('ai-dashboard'); // ai-dashboard, sessions, analytics, data, settings, session-analytics, powerbi, enhanced-analytics, ai-insights, advanced-settings
   const [selectedAnalyticsSession, setSelectedAnalyticsSession] = useState<string>('');
-  const [realTimeResponses, setRealTimeResponses] = useState<any[]>([]);
   const { toast } = useToast();
 
   const {
@@ -107,12 +101,6 @@ const AdminDashboard = () => {
     }
   }, [sessions.length]);
 
-  // Handle real-time response updates
-  const handleNewResponse = (newResponse: any) => {
-    setRealTimeResponses(prev => [newResponse, ...prev]);
-    // Refresh data
-    fetchResponses();
-  };
   const handleLogin = (e: React.FormEvent) => {
     e.preventDefault();
     if (password === "Admin123") {
@@ -446,7 +434,7 @@ const AdminDashboard = () => {
               <ArrowLeft className="h-5 w-5" />
               <span>Back to Home</span>
             </Link>
-            <div className="flex items-center space-x-3 ml-auto">
+            <div className="flex items-center space-x-3">
               <ThemeToggle />
               <img 
                 src="/lovable-uploads/8b444953-4cf5-4245-a883-10795b1e23c3.png" 
@@ -454,7 +442,16 @@ const AdminDashboard = () => {
                 className="h-8 w-auto"
               />
             </div>
-            <div className="flex items-center space-x-2 overflow-x-auto ml-4">
+            <div className="flex items-center space-x-2 overflow-x-auto">
+              <Button 
+                onClick={() => setCurrentView('ai-dashboard')}
+                variant={currentView === 'ai-dashboard' ? 'default' : 'outline'}
+                className={currentView === 'ai-dashboard' ? 'bg-white text-red-900' : 'text-red-900 border-white hover:bg-white/10'}
+                size="sm"
+              >
+                <TrendingUp className="h-4 w-4 mr-2" />
+                AI Dashboard
+              </Button>
               <Button 
                 onClick={() => setCurrentView('sessions')}
                 variant={currentView === 'sessions' ? 'default' : 'outline'}
@@ -465,22 +462,13 @@ const AdminDashboard = () => {
                 Sessions
               </Button>
               <Button 
-                onClick={() => setCurrentView('live-dashboard')}
-                variant={currentView === 'live-dashboard' ? 'default' : 'outline'}
-                className={currentView === 'live-dashboard' ? 'bg-white text-red-900' : 'text-red-900 border-white hover:bg-white/10'}
-                size="sm"
-              >
-                <Activity className="h-4 w-4 mr-2" />
-                Live Dashboard
-              </Button>
-              <Button 
                 onClick={() => setCurrentView('analytics')}
                 variant={currentView === 'analytics' ? 'default' : 'outline'}
                 className={currentView === 'analytics' ? 'bg-white text-red-900' : 'text-red-900 border-white hover:bg-white/10'}
                 size="sm"
               >
                 <TrendingUp className="h-4 w-4 mr-2" />
-                Analytics
+                Overview
               </Button>
               <Button 
                 onClick={() => setCurrentView('session-analytics')}
@@ -510,6 +498,33 @@ const AdminDashboard = () => {
                 Data Hub
               </Button>
               <Button 
+                onClick={() => setCurrentView('enhanced-analytics')}
+                variant={currentView === 'enhanced-analytics' ? 'default' : 'outline'}
+                className={currentView === 'enhanced-analytics' ? 'bg-white text-red-900' : 'text-red-900 border-white hover:bg-white/10'}
+                size="sm"
+              >
+                <TrendingUp className="h-4 w-4 mr-2" />
+                Enhanced Analytics
+              </Button>
+              <Button 
+                onClick={() => setCurrentView('advanced-data')}
+                variant={currentView === 'advanced-data' ? 'default' : 'outline'}
+                className={currentView === 'advanced-data' ? 'bg-white text-red-900' : 'text-red-900 border-white hover:bg-white/10'}
+                size="sm"
+              >
+                <BarChart3 className="h-4 w-4 mr-2" />
+                Advanced Analytics
+              </Button>
+              <Button 
+                onClick={() => setCurrentView('ai-insights')}
+                variant={currentView === 'ai-insights' ? 'default' : 'outline'}
+                className={currentView === 'ai-insights' ? 'bg-white text-red-900' : 'text-red-900 border-white hover:bg-white/10'}
+                size="sm"
+              >
+                <TrendingUp className="h-4 w-4 mr-2" />
+                AI Insights
+              </Button>
+              <Button 
                 onClick={() => setCurrentView('settings')}
                 variant={currentView === 'settings' ? 'default' : 'outline'}
                 className={currentView === 'settings' ? 'bg-white text-red-900' : 'text-red-900 border-white hover:bg-white/10'}
@@ -517,6 +532,15 @@ const AdminDashboard = () => {
               >
                 <Settings className="h-4 w-4 mr-2" />
                 Settings
+              </Button>
+              <Button 
+                onClick={() => setCurrentView('advanced-settings')}
+                variant={currentView === 'advanced-settings' ? 'default' : 'outline'}
+                className={currentView === 'advanced-settings' ? 'bg-white text-red-900' : 'text-red-900 border-white hover:bg-white/10'}
+                size="sm"
+              >
+                <Settings className="h-4 w-4 mr-2" />
+                Advanced Settings
               </Button>
               <Button 
                 onClick={() => setIsAuthenticated(false)}
@@ -533,12 +557,84 @@ const AdminDashboard = () => {
 
       {/* Main Content */}
       <div className="container mx-auto px-4 py-8">
-        {/* Real-time Notifications */}
-        <div className="mb-6">
-          <RealTimeNotifications onNewResponse={handleNewResponse} />
-        </div>
-        
-        {currentView === 'sessions' ? (
+        {currentView === 'ai-dashboard' ? (
+          <div className="space-y-6">
+            <div className="flex items-center justify-between">
+              <h1 className="text-3xl font-bold text-foreground">AI-Powered Dashboard</h1>
+            </div>
+            <AIDashboard sessions={sessions} responses={responses} />
+          </div>
+        ) : currentView === 'advanced-settings' ? (
+          <div className="space-y-6">
+            <div className="flex items-center justify-between">
+              <h1 className="text-3xl font-bold text-foreground">Advanced Settings</h1>
+            </div>
+            <AdvancedSettings />
+          </div>
+        ) : currentView === 'sessions' ? (
+          // Sessions content here
+          <div>Sessions Management</div>
+        ) : currentView === 'settings' ? (
+          <div className="space-y-6">
+            <div className="flex items-center justify-between">
+              <h1 className="text-3xl font-bold text-foreground">Admin Settings</h1>
+            </div>
+            <AdminSettings />
+          </div>
+        ) : currentView === 'data' ? (
+          <div className="space-y-6">
+            <div className="flex items-center justify-between">
+              <h1 className="text-3xl font-bold text-foreground">Data Management Hub</h1>
+            </div>
+            <DataManagementHub 
+              sessions={sessions}
+              responses={responses}
+              onExport={handleExport}
+            />
+          </div>
+        ) : currentView === 'analytics' ? (
+          <div className="space-y-6">
+            <div className="flex items-center justify-between">
+              <h1 className="text-3xl font-bold text-foreground">Analytics Overview</h1>
+            </div>
+            <AnalyticsDashboard sessions={sessions} responses={responses} />
+          </div>
+        ) : currentView === 'session-analytics' ? (
+          <div className="space-y-6">
+            <div className="flex items-center justify-between">
+              <h1 className="text-3xl font-bold text-foreground">Session Analytics</h1>
+            </div>
+            <SessionAnalyticsDashboard sessions={sessions} responses={responses} />
+          </div>
+        ) : currentView === 'powerbi' ? (
+          <div className="space-y-6">
+            <div className="flex items-center justify-between">
+              <h1 className="text-3xl font-bold text-foreground">Power BI Integration</h1>
+            </div>
+            <PowerBIIntegration sessions={sessions} responses={responses} />
+          </div>
+        ) : currentView === 'ai-insights' ? (
+          <div className="space-y-6">
+            <div className="flex items-center justify-between">
+              <h1 className="text-3xl font-bold text-foreground">AI Insights & Real-time Updates</h1>
+            </div>
+            <AIInsights sessions={sessions} responses={responses} />
+          </div>
+        ) : currentView === 'enhanced-analytics' ? (
+          <div className="space-y-6">
+            <div className="flex items-center justify-between">
+              <h1 className="text-3xl font-bold text-foreground">Enhanced Analytics</h1>
+            </div>
+            <EnhancedAnalytics sessions={sessions} responses={responses} />
+          </div>
+        ) : currentView === 'advanced-data' ? (
+          <div className="space-y-6">
+            <div className="flex items-center justify-between">
+              <h1 className="text-3xl font-bold text-foreground">Advanced Data Analytics</h1>
+            </div>
+            <AdvancedDataHub />
+          </div>
+        ) : (
           <>
             {/* Statistics Cards */}
             <div className="grid md:grid-cols-4 gap-6 mb-8">
@@ -591,17 +687,6 @@ const AdminDashboard = () => {
               </Card>
             </div>
 
-        ) : currentView === 'live-dashboard' ? (
-          <div className="space-y-6">
-            <div className="flex items-center justify-between">
-              <h1 className="text-3xl font-bold text-foreground">Live Dashboard</h1>
-              <div className="flex items-center space-x-2">
-                <div className="w-3 h-3 bg-green-500 rounded-full animate-pulse"></div>
-                <span className="text-sm font-medium text-green-600">Real-time Active</span>
-              </div>
-            </div>
-            <LiveDashboard />
-          </div>
             {/* Search and Actions */}
             <Card className="shadow-lg border-0 mb-6">
               <CardContent className="p-6 bg-card">
@@ -881,83 +966,6 @@ const AdminDashboard = () => {
               </div>
             )}
           </>
-        ) : currentView === 'settings' ? (
-          <div className="space-y-6">
-            <div className="flex items-center justify-between">
-              <h1 className="text-3xl font-bold text-foreground">Settings & Configuration</h1>
-            </div>
-            <div className="space-y-8">
-              {/* AI Dashboard Section */}
-              <Card>
-                <CardHeader>
-                  <CardTitle className="flex items-center space-x-2">
-                    <Brain className="h-5 w-5 text-purple-600" />
-                    <span>AI-Powered Analytics</span>
-                  </CardTitle>
-                  <CardDescription>
-                    Advanced AI insights and dashboard analytics
-                  </CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <AIDashboardCombined sessions={sessions} responses={responses} />
-                </CardContent>
-              </Card>
-              
-              {/* Admin Settings */}
-              <AdminSettings />
-              
-              {/* Advanced Settings */}
-              <AdvancedSettings />
-            </div>
-          </div>
-        ) : currentView === 'data' ? (
-          <div className="space-y-6">
-            <div className="flex items-center justify-between">
-              <h1 className="text-3xl font-bold text-foreground">Data Management Hub</h1>
-            </div>
-            <DataManagementHub 
-              sessions={sessions}
-              responses={responses}
-              onExport={handleExport}
-            />
-          </div>
-        ) : currentView === 'analytics' ? (
-          <div className="space-y-6">
-            <div className="flex items-center justify-between">
-              <h1 className="text-3xl font-bold text-foreground">Combined Analytics</h1>
-            </div>
-            <CombinedAnalytics sessions={sessions} responses={responses} />
-          </div>
-        ) : currentView === 'session-analytics' ? (
-          <div className="space-y-6">
-            <div className="flex items-center justify-between">
-              <h1 className="text-3xl font-bold text-foreground">Session Analytics</h1>
-            </div>
-            <SessionAnalyticsDashboard sessions={sessions} responses={responses} />
-          </div>
-        ) : currentView === 'powerbi' ? (
-          <div className="space-y-6">
-            <div className="flex items-center justify-between">
-              <h1 className="text-3xl font-bold text-foreground">Power BI Integration</h1>
-            </div>
-            <PowerBIIntegration sessions={sessions} responses={responses} />
-          </div>
-        ) : currentView === 'advanced-data' ? (
-          <div className="space-y-6">
-            <div className="flex items-center justify-between">
-              <h1 className="text-3xl font-bold text-foreground">Advanced Data Analytics</h1>
-            </div>
-            <AdvancedDataHub />
-          </div>
-        ) : (
-          <div className="space-y-6">
-            <div className="flex items-center justify-between">
-              <h1 className="text-3xl font-bold text-foreground">Dashboard Overview</h1>
-            </div>
-            <div className="text-center py-12">
-              <p className="text-muted-foreground">Select a view from the navigation above.</p>
-            </div>
-          </div>
         )}
       </div>
     </div>

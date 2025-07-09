@@ -199,7 +199,7 @@ This form can be accessed at: ${window.location.origin}/feedback/${session.share
               <ArrowLeft className="h-5 w-5" />
               <span>Back to Home</span>
             </Link>
-            <div className="flex items-center space-x-3 ml-auto">
+            <div className="flex items-center space-x-3">
               <ThemeToggle />
               <Button
                 onClick={downloadFormAsText}
