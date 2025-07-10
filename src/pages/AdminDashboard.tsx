@@ -6,7 +6,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useToast } from "@/hooks/use-toast";
 import { Link } from "react-router-dom";
-import { ArrowLeft, BarChart3, Download, Eye, Lock, Users, Edit, Trash2, Search, Filter, FileText, Plus, Share2, Database, Settings, TrendingUp } from "lucide-react";
+import { ArrowLeft, BarChart3, Download, Eye, Lock, Users, Edit, Trash2, Search, Filter, FileText, Plus, Share2, Database, Settings, TrendingUp, QrCode, ExternalLink, Copy, Mail, MessageCircle } from "lucide-react";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import {
   AlertDialog,
@@ -19,6 +19,13 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 import { useFeedbackData } from "@/hooks/useFeedbackData";
 import { useSessionManager } from "@/hooks/useSessionManager";
 import SessionEditor from "@/components/SessionEditor";
@@ -719,6 +726,129 @@ const AdminDashboard = () => {
                 </div>
               </CardContent>
             </Card>
+
+            {/* Share Dialog */}
+            <Dialog open={showShareManager !== null} onOpenChange={() => setShowShareManager(null)}>
+              <DialogContent className="max-w-4xl">
+                <DialogHeader>
+                  <DialogTitle>Share Session: {showShareManager?.title}</DialogTitle>
+                  <DialogDescription>
+                    Share this feedback session with students and manage access options.
+                  </DialogDescription>
+                </DialogHeader>
+                <div className="space-y-6">
+                  {showShareManager && <ShareableLinkManager session={showShareManager} />}
+                  
+                  {/* Additional Sharing Options */}
+                  {showShareManager && (
+                    <Card>
+                      <CardHeader>
+                        <CardTitle className="flex items-center space-x-2">
+                          <MessageCircle className="h-5 w-5" />
+                          <span>Additional Share Options</span>
+                        </CardTitle>
+                        <CardDescription>
+                          More ways to share this feedback session
+                        </CardDescription>
+                      </CardHeader>
+                      <CardContent className="space-y-4">
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                          <Button
+                            variant="outline"
+                            className="flex items-center space-x-2 h-auto p-4"
+                            onClick={() => {
+                              const shareUrl = `${window.location.origin}/feedback/${showShareManager.share_link}`;
+                              const emailSubject = encodeURIComponent(`Feedback Request: ${showShareManager.title}`);
+                              const emailBody = encodeURIComponent(`Hi,\n\nPlease provide your feedback for "${showShareManager.title}" using the following link:\n\n${shareUrl}\n\nThank you!`);
+                              window.open(`mailto:?subject=${emailSubject}&body=${emailBody}`, '_blank');
+                            }}
+                          >
+                            <Mail className="h-5 w-5" />
+                            <div className="text-left">
+                              <div className="font-medium">Email Link</div>
+                              <div className="text-sm text-muted-foreground">Send via email</div>
+                            </div>
+                          </Button>
+                          
+                          <Button
+                            variant="outline"
+                            className="flex items-center space-x-2 h-auto p-4"
+                            onClick={() => {
+                              const shareUrl = `${window.location.origin}/feedback/${showShareManager.share_link}`;
+                              const whatsappText = encodeURIComponent(`Please provide your feedback for "${showShareManager.title}" using this link: ${shareUrl}`);
+                              window.open(`https://wa.me/?text=${whatsappText}`, '_blank');
+                            }}
+                          >
+                            <MessageCircle className="h-5 w-5" />
+                            <div className="text-left">
+                              <div className="font-medium">WhatsApp</div>
+                              <div className="text-sm text-muted-foreground">Share via WhatsApp</div>
+                            </div>
+                          </Button>
+                          
+                          <Button
+                            variant="outline"
+                            className="flex items-center space-x-2 h-auto p-4"
+                            onClick={() => {
+                              const shareUrl = `${window.location.origin}/feedback/${showShareManager.share_link}`;
+                              const qrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=${encodeURIComponent(shareUrl)}`;
+                              const printWindow = window.open('', '_blank');
+                              printWindow?.document.write(`
+                                <html>
+                                  <head><title>QR Code - ${showShareManager.title}</title></head>
+                                  <body style="text-align: center; font-family: Arial;">
+                                    <h2>${showShareManager.title}</h2>
+                                    <p>Scan this QR code to access the feedback form</p>
+                                    <img src="${qrUrl}" alt="QR Code" />
+                                    <p style="font-size: 12px; margin-top: 20px;">${shareUrl}</p>
+                                  </body>
+                                </html>
+                              `);
+                              printWindow?.document.close();
+                              printWindow?.print();
+                            }}
+                          >
+                            <QrCode className="h-5 w-5" />
+                            <div className="text-left">
+                              <div className="font-medium">Print QR Code</div>
+                              <div className="text-sm text-muted-foreground">Generate printable QR</div>
+                            </div>
+                          </Button>
+                          
+                          <Button
+                            variant="outline"
+                            className="flex items-center space-x-2 h-auto p-4"
+                            onClick={() => {
+                              const shareUrl = `${window.location.origin}/feedback/${showShareManager.share_link}`;
+                              if (navigator.share) {
+                                navigator.share({
+                                  title: `Feedback: ${showShareManager.title}`,
+                                  text: `Please provide your feedback for "${showShareManager.title}"`,
+                                  url: shareUrl,
+                                });
+                              } else {
+                                // Fallback for browsers that don't support Web Share API
+                                navigator.clipboard.writeText(shareUrl);
+                                toast({
+                                  title: "Link Copied",
+                                  description: "Share link copied to clipboard",
+                                });
+                              }
+                            }}
+                          >
+                            <Share2 className="h-5 w-5" />
+                            <div className="text-left">
+                              <div className="font-medium">Share</div>
+                              <div className="text-sm text-muted-foreground">Use device share menu</div>
+                            </div>
+                          </Button>
+                        </div>
+                      </CardContent>
+                    </Card>
+                  )}
+                </div>
+              </DialogContent>
+            </Dialog>
 
           </>
         ) : currentView === 'settings' ? (
