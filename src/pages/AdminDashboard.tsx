@@ -24,16 +24,14 @@ import { useSessionManager } from "@/hooks/useSessionManager";
 import SessionEditor from "@/components/SessionEditor";
 import ShareableLinkManager from "@/components/ShareableLinkManager";
 import ThemeToggle from "@/components/ThemeToggle";
-import AnalyticsDashboard from "@/components/AnalyticsDashboard";
-import SessionAnalyticsDashboard from "@/components/SessionAnalyticsDashboard";
+import Analytics from "@/components/Analytics";
 import DataManagementHub from "@/components/DataManagementHub";
 import AdvancedDataHub from "@/components/AdvancedDataHub";
 import PowerBIIntegration from "@/components/PowerBIIntegration";
 import ProfessionalQRCode from "@/components/ProfessionalQRCode";
 import AdminSettings from "@/components/AdminSettings";
-import EnhancedAnalytics from "@/components/EnhancedAnalytics";
-import AIInsights from "@/components/AIInsights";
 import AdvancedSettings from "@/components/AdvancedSettings";
+import { downloadSampleCSV } from "@/utils/sampleData";
 
 // All available form names
 const ALL_FORM_NAMES = [
@@ -62,7 +60,7 @@ const AdminDashboard = () => {
   const [showAnalytics, setShowAnalytics] = useState(false);
   const [showDataManagement, setShowDataManagement] = useState(false);
   const [showSettings, setShowSettings] = useState(false);
-  const [currentView, setCurrentView] = useState('sessions'); // sessions, analytics, data, powerbi, enhanced-analytics, ai-insights, settings
+  const [currentView, setCurrentView] = useState('sessions'); // sessions, analytics, data, powerbi, settings
   const [selectedAnalyticsSession, setSelectedAnalyticsSession] = useState<string>('');
   const { toast } = useToast();
 
@@ -458,15 +456,6 @@ const AdminDashboard = () => {
                 Analytics
               </Button>
               <Button 
-                onClick={() => setCurrentView('powerbi')}
-                variant={currentView === 'powerbi' ? 'default' : 'outline'}
-                className={currentView === 'powerbi' ? 'bg-white text-red-900' : 'text-red-900 border-white hover:bg-white/10'}
-                size="sm"
-              >
-                <BarChart3 className="h-4 w-4 mr-2" />
-                Power BI
-              </Button>
-              <Button 
                 onClick={() => setCurrentView('data')}
                 variant={currentView === 'data' ? 'default' : 'outline'}
                 className={currentView === 'data' ? 'bg-white text-red-900' : 'text-red-900 border-white hover:bg-white/10'}
@@ -474,24 +463,6 @@ const AdminDashboard = () => {
               >
                 <Database className="h-4 w-4 mr-2" />
                 Data Hub
-              </Button>
-              <Button 
-                onClick={() => setCurrentView('enhanced-analytics')}
-                variant={currentView === 'enhanced-analytics' ? 'default' : 'outline'}
-                className={currentView === 'enhanced-analytics' ? 'bg-white text-red-900' : 'text-red-900 border-white hover:bg-white/10'}
-                size="sm"
-              >
-                <TrendingUp className="h-4 w-4 mr-2" />
-                Enhanced Analytics
-              </Button>
-              <Button 
-                onClick={() => setCurrentView('ai-insights')}
-                variant={currentView === 'ai-insights' ? 'default' : 'outline'}
-                className={currentView === 'ai-insights' ? 'bg-white text-red-900' : 'text-red-900 border-white hover:bg-white/10'}
-                size="sm"
-              >
-                <TrendingUp className="h-4 w-4 mr-2" />
-                AI Insights
               </Button>
               <Button 
                 onClick={() => setCurrentView('settings')}
@@ -598,37 +569,18 @@ const AdminDashboard = () => {
                     </Button>
                     <Button 
                       onClick={() => {
-                        // Generate sample responses
-                        const sampleResponse = {
-                          session_id: sessions[0]?.id,
-                          user_name: `Sample User ${Math.floor(Math.random() * 1000)}`,
-                          user_email: `user${Math.floor(Math.random() * 1000)}@example.com`,
-                          bootcamp_id: `BOOTCAMP-${Math.floor(Math.random() * 100)}`,
-                          responses: sessions[0]?.questions.reduce((acc: any, q: any) => {
-                            if (q.type === 'rating') {
-                              acc[q.id] = Math.floor(Math.random() * 5) + 1;
-                            } else if (q.type === 'text') {
-                              acc[q.id] = `Sample response for: ${q.question}`;
-                            } else if (q.type === 'multiple_choice') {
-                              acc[q.id] = q.options[Math.floor(Math.random() * q.options.length)];
-                            }
-                            return acc;
-                          }, {}),
-                          submitted_at: new Date().toISOString()
-                        };
-                        
-                        // Add sample response (in real app, this would be saved to database)
+                        downloadSampleCSV();
                         toast({
-                          title: "Sample Response Generated",
-                          description: "A sample response has been generated for testing.",
+                          title: "Sample CSV Downloaded",
+                          description: "Sample feedback responses with Indian names downloaded successfully.",
                         });
                       }}
                       className="bg-blue-600 hover:bg-blue-700 text-white"
-                      disabled={sessions.length === 0}
                     >
-                      <Plus className="h-4 w-4 mr-2" />
-                      Generate Sample
+                      <Download className="h-4 w-4 mr-2" />
+                      Download Sample CSV
                     </Button>
+                    <ThemeToggle />
                     <Button 
                       onClick={handleBulkExport}
                       className="bg-red-900 hover:bg-red-800 text-white"
@@ -790,20 +742,6 @@ const AdminDashboard = () => {
               </CardContent>
             </Card>
 
-            {/* Session Analytics Section */}
-            <div className="mt-8">
-              <Card className="shadow-xl border-0">
-                <CardHeader className="bg-gradient-to-r from-blue-900 to-blue-800 text-white rounded-t-lg">
-                  <CardTitle className="text-2xl">Session Analytics & Reports</CardTitle>
-                  <CardDescription className="text-blue-100">
-                    Detailed analytics and insights for your feedback sessions
-                  </CardDescription>
-                </CardHeader>
-                <CardContent className="p-6 bg-card">
-                  <SessionAnalyticsDashboard sessions={sessions} responses={responses} />
-                </CardContent>
-              </Card>
-            </div>
           </>
         ) : currentView === 'settings' ? (
           <div className="space-y-6">
@@ -827,40 +765,7 @@ const AdminDashboard = () => {
             />
           </div>
         ) : currentView === 'analytics' ? (
-          <div className="space-y-6">
-            <div className="flex items-center justify-between">
-              <h1 className="text-3xl font-bold text-foreground">Analytics Overview</h1>
-            </div>
-            <AnalyticsDashboard sessions={sessions} responses={responses} />
-          </div>
-        ) : currentView === 'powerbi' ? (
-          <div className="space-y-6">
-            <div className="flex items-center justify-between">
-              <h1 className="text-3xl font-bold text-foreground">Power BI Integration</h1>
-            </div>
-            <PowerBIIntegration sessions={sessions} responses={responses} />
-          </div>
-        ) : currentView === 'ai-insights' ? (
-          <div className="space-y-6">
-            <div className="flex items-center justify-between">
-              <h1 className="text-3xl font-bold text-foreground">AI Insights & Real-time Updates</h1>
-            </div>
-            <AIInsights sessions={sessions} responses={responses} />
-          </div>
-        ) : currentView === 'enhanced-analytics' ? (
-          <div className="space-y-6">
-            <div className="flex items-center justify-between">
-              <h1 className="text-3xl font-bold text-foreground">Enhanced Analytics</h1>
-            </div>
-            <EnhancedAnalytics sessions={sessions} responses={responses} />
-          </div>
-        ) : currentView === 'advanced-data' ? (
-          <div className="space-y-6">
-            <div className="flex items-center justify-between">
-              <h1 className="text-3xl font-bold text-foreground">Advanced Data Analytics</h1>
-            </div>
-            <AdvancedDataHub />
-          </div>
+          <Analytics sessions={sessions} responses={responses} />
         ) : null}
       </div>
     </div>
