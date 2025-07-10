@@ -23,7 +23,6 @@ import { useFeedbackData } from "@/hooks/useFeedbackData";
 import { useSessionManager } from "@/hooks/useSessionManager";
 import SessionEditor from "@/components/SessionEditor";
 import ShareableLinkManager from "@/components/ShareableLinkManager";
-import ThemeToggle from "@/components/ThemeToggle";
 import Analytics from "@/components/Analytics";
 import DataManagementHub from "@/components/DataManagementHub";
 import AdvancedDataHub from "@/components/AdvancedDataHub";
@@ -31,7 +30,6 @@ import PowerBIIntegration from "@/components/PowerBIIntegration";
 import ProfessionalQRCode from "@/components/ProfessionalQRCode";
 import AdminSettings from "@/components/AdminSettings";
 import AdvancedSettings from "@/components/AdvancedSettings";
-import { downloadSampleCSV } from "@/utils/sampleData";
 
 // All available form names
 const ALL_FORM_NAMES = [
@@ -398,14 +396,11 @@ const AdminDashboard = () => {
                 <ArrowLeft className="h-4 w-4 mr-2" />
                 Back to Dashboard
               </Button>
-              <div className="flex items-center space-x-3">
-                <ThemeToggle />
-                <img 
-                  src="/lovable-uploads/8b444953-4cf5-4245-a883-10795b1e23c3.png" 
-                  alt="NIAT Logo" 
-                  className="h-8 w-auto"
-                />
-              </div>
+              <img 
+                src="/lovable-uploads/8b444953-4cf5-4245-a883-10795b1e23c3.png" 
+                alt="NIAT Logo" 
+                className="h-8 w-auto"
+              />
             </div>
           </div>
         </div>
@@ -481,9 +476,6 @@ const AdminDashboard = () => {
               >
                 Logout
               </Button>
-            </div>
-            <div className="flex items-center space-x-3">
-              <ThemeToggle />
             </div>
           </div>
         </div>
@@ -567,20 +559,6 @@ const AdminDashboard = () => {
                       <Plus className="h-4 w-4 mr-2" />
                       New Session
                     </Button>
-                    <Button 
-                      onClick={() => {
-                        downloadSampleCSV();
-                        toast({
-                          title: "Sample CSV Downloaded",
-                          description: "Sample feedback responses with Indian names downloaded successfully.",
-                        });
-                      }}
-                      className="bg-blue-600 hover:bg-blue-700 text-white"
-                    >
-                      <Download className="h-4 w-4 mr-2" />
-                      Download Sample CSV
-                    </Button>
-                    <ThemeToggle />
                     <Button 
                       onClick={handleBulkExport}
                       className="bg-red-900 hover:bg-red-800 text-white"

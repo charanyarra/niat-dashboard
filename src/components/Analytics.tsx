@@ -7,8 +7,6 @@ import { Button } from '@/components/ui/button';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, PieChart, Pie, Cell, LineChart, Line, Area, AreaChart } from 'recharts';
 import { FeedbackSession, FeedbackResponse } from '@/hooks/useFeedbackData';
 import { TrendingUp, Users, Star, MapPin, Calendar, Download, Eye, Activity } from 'lucide-react';
-import ThemeToggle from './ThemeToggle';
-
 interface AnalyticsProps {
   sessions: FeedbackSession[];
   responses: FeedbackResponse[];
@@ -201,13 +199,10 @@ const Analytics = ({ sessions, responses }: AnalyticsProps) => {
 
   return (
     <div className="space-y-6">
-      {/* Analytics Header with Theme Toggle */}
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-3xl font-bold text-foreground">Analytics Dashboard</h1>
-          <p className="text-muted-foreground">Comprehensive insights and session analytics</p>
-        </div>
-        <ThemeToggle />
+      {/* Analytics Header */}
+      <div>
+        <h1 className="text-3xl font-bold text-foreground">Analytics Dashboard</h1>
+        <p className="text-muted-foreground">Comprehensive insights and session analytics</p>
       </div>
 
       {/* Overall KPI Cards */}
