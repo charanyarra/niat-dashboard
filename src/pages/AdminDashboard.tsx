@@ -727,6 +727,156 @@ const AdminDashboard = () => {
               </CardContent>
             </Card>
 
+            {/* View Session Dialog */}
+            <Dialog open={viewingSession !== null} onOpenChange={() => setViewingSession(null)}>
+              <DialogContent className="max-w-6xl max-h-[90vh] overflow-y-auto">
+                <DialogHeader>
+                  <DialogTitle className="flex items-center space-x-2">
+                    <Eye className="h-5 w-5" />
+                    <span>View Session: {viewingSession?.title}</span>
+                  </DialogTitle>
+                  <DialogDescription>
+                    Real-time view of responses and session details
+                  </DialogDescription>
+                </DialogHeader>
+                
+                {viewingSession && (
+                  <div className="space-y-6">
+                    {/* Session Info */}
+                    <Card>
+                      <CardHeader>
+                        <CardTitle>Session Information</CardTitle>
+                      </CardHeader>
+                      <CardContent>
+                        <div className="grid grid-cols-2 gap-4">
+                          <div>
+                            <p className="text-sm font-medium text-muted-foreground">Title</p>
+                            <p className="text-lg font-semibold">{viewingSession.title}</p>
+                          </div>
+                          <div>
+                            <p className="text-sm font-medium text-muted-foreground">Status</p>
+                            <span className={`px-2 py-1 rounded-full text-xs font-medium ${
+                              viewingSession.is_active 
+                                ? 'bg-green-100 text-green-800' 
+                                : 'bg-gray-100 text-gray-800'
+                            }`}>
+                              {viewingSession.is_active ? 'Active' : 'Inactive'}
+                            </span>
+                          </div>
+                          <div>
+                            <p className="text-sm font-medium text-muted-foreground">Questions</p>
+                            <p>{viewingSession.questions.length}</p>
+                          </div>
+                          <div>
+                            <p className="text-sm font-medium text-muted-foreground">Total Responses</p>
+                            <p className="text-lg font-semibold text-green-600">
+                              {getResponseCount(viewingSession.id)}
+                            </p>
+                          </div>
+                          <div className="col-span-2">
+                            <p className="text-sm font-medium text-muted-foreground">Description</p>
+                            <p>{viewingSession.description || 'No description'}</p>
+                          </div>
+                        </div>
+                      </CardContent>
+                    </Card>
+
+                    {/* Questions */}
+                    <Card>
+                      <CardHeader>
+                        <CardTitle>Questions</CardTitle>
+                      </CardHeader>
+                      <CardContent>
+                        <div className="space-y-3">
+                          {viewingSession.questions.map((question: any, index: number) => (
+                            <div key={question.id || index} className="border-l-4 border-red-200 pl-4">
+                              <p className="font-medium">
+                                {index + 1}. {question.question}
+                              </p>
+                              <p className="text-sm text-muted-foreground">
+                                Type: {question.type} {question.required && '(Required)'}
+                              </p>
+                            </div>
+                          ))}
+                        </div>
+                      </CardContent>
+                    </Card>
+
+                    {/* Live Responses */}
+                    <Card>
+                      <CardHeader>
+                        <CardTitle className="flex items-center space-x-2">
+                          <span>Live Responses</span>
+                          <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
+                        </CardTitle>
+                        <CardDescription>
+                          Real-time responses (updates automatically)
+                        </CardDescription>
+                      </CardHeader>
+                      <CardContent>
+                        {responses.filter(r => r.session_id === viewingSession.id).length === 0 ? (
+                          <div className="text-center py-8 text-muted-foreground">
+                            <Users className="h-12 w-12 mx-auto mb-4 opacity-50" />
+                            <p>No responses yet. Waiting for participants...</p>
+                          </div>
+                        ) : (
+                          <div className="space-y-4">
+                            {responses
+                              .filter(r => r.session_id === viewingSession.id)
+                              .slice(0, 10) // Show last 10 responses
+                              .map((response) => (
+                                <div key={response.id} className="border rounded-lg p-4 bg-gray-50">
+                                  <div className="flex justify-between items-start mb-3">
+                                    <div>
+                                      <p className="font-medium">{response.user_name}</p>
+                                      <p className="text-sm text-muted-foreground">{response.user_email}</p>
+                                      <p className="text-sm text-muted-foreground">ID: {response.bootcamp_id}</p>
+                                    </div>
+                                    <p className="text-sm text-muted-foreground">
+                                      {new Date(response.submitted_at).toLocaleString()}
+                                    </p>
+                                  </div>
+                                  <div className="space-y-2">
+                                    {viewingSession.questions.map((question: any, qIndex: number) => {
+                                      const answer = response.responses[question.id] || response.responses[question.question];
+                                      return (
+                                        <div key={question.id || qIndex} className="text-sm">
+                                          <span className="font-medium">{question.question}: </span>
+                                          <span className="text-muted-foreground">
+                                            {answer || 'No answer'}
+                                          </span>
+                                        </div>
+                                      );
+                                    })}
+                                  </div>
+                                </div>
+                              ))}
+                            
+                            {responses.filter(r => r.session_id === viewingSession.id).length > 10 && (
+                              <div className="text-center">
+                                <p className="text-sm text-muted-foreground">
+                                  Showing latest 10 responses. Export CSV for full data.
+                                </p>
+                                <Button 
+                                  onClick={() => handleExport(viewingSession.id, 'CSV')}
+                                  variant="outline"
+                                  size="sm"
+                                  className="mt-2"
+                                >
+                                  <Download className="h-4 w-4 mr-2" />
+                                  Export All Responses
+                                </Button>
+                              </div>
+                            )}
+                          </div>
+                        )}
+                      </CardContent>
+                    </Card>
+                  </div>
+                )}
+              </DialogContent>
+            </Dialog>
+
             {/* Share Dialog */}
             <Dialog open={showShareManager !== null} onOpenChange={() => setShowShareManager(null)}>
               <DialogContent className="max-w-4xl">
