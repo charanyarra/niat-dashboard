@@ -158,7 +158,7 @@ export const useFeedbackData = () => {
     }
 
     // Create headers
-    const headers = ['Name', 'Email', 'Bootcamp ID', 'Submitted At'];
+    const headers = ['Name', 'Email', 'Bootcamp ID', 'Location', 'Submitted At'];
     session.questions.forEach((q: any) => {
       headers.push(q.question || `Question ${q.id}`);
     });
@@ -171,6 +171,7 @@ export const useFeedbackData = () => {
         `"${response.user_name || ''}"`,
         `"${response.user_email || ''}"`,
         `"${response.bootcamp_id || ''}"`,
+        `"${response.responses.location || 'Not specified'}"`,
         `"${new Date(response.submitted_at).toLocaleString()}"`
       ];
       
