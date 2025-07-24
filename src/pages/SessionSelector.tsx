@@ -163,6 +163,17 @@ const SessionSelector = () => {
                 >
                   Proceed to Feedback Form
                 </Button>
+
+                {/* Contact Information */}
+                <div className="mt-6 p-4 bg-gray-100 rounded-lg">
+                  <h4 className="font-semibold text-gray-800 mb-2">Need Help?</h4>
+                  <div className="text-sm text-gray-600 space-y-1">
+                    <p><strong>Contact Support:</strong></p>
+                    <p>📞 Phone: +91 9014847505</p>
+                    <p>📧 Email: guru.saicharanyarra@nxtwave.co.in</p>
+                    <p className="mt-2 text-xs">Available for technical support across Pune, Hyderabad, and Noida locations</p>
+                  </div>
+                </div>
               </form>
             </CardContent>
           </Card>

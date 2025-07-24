@@ -350,6 +350,32 @@ const AdminSettings = () => {
           </div>
         </CardContent>
       </Card>
+
+      {/* Contact Information Management */}
+      <Card>
+        <CardHeader>
+          <CardTitle className="flex items-center space-x-2">
+            <Users className="h-5 w-5" />
+            <span>Contact Information</span>
+          </CardTitle>
+          <CardDescription>Manage support contact details</CardDescription>
+        </CardHeader>
+        <CardContent>
+          <div className="space-y-4">
+            <div className="p-4 border rounded-lg">
+              <h4 className="font-medium mb-2">Current Support Contact</h4>
+              <div className="text-sm space-y-1">
+                <p><strong>Phone:</strong> +91 9014847505</p>
+                <p><strong>Email:</strong> guru.saicharanyarra@nxtwave.co.in</p>
+                <p><strong>Locations:</strong> Pune, Hyderabad, Noida</p>
+              </div>
+            </div>
+            <Button variant="outline">
+              Update Contact Information
+            </Button>
+          </div>
+        </CardContent>
+      </Card>
     </div>
   );
 };

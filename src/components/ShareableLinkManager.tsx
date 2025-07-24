@@ -37,8 +37,68 @@ const ShareableLinkManager = ({ session }: ShareableLinkManagerProps) => {
   };
 
   const generateQRCode = () => {
-    const qrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodeURIComponent(shareUrl)}`;
-    window.open(qrUrl, '_blank');
+    // Create a better QR code with error correction
+    const qrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=400x400&data=${encodeURIComponent(shareUrl)}&format=png&bgcolor=ffffff&color=dc2626&qzone=2&ecc=M`;
+    
+    // Open in new window with proper formatting
+    const newWindow = window.open('', '_blank');
+    if (newWindow) {
+      newWindow.document.write(`
+        <html>
+          <head>
+            <title>QR Code - ${session.title}</title>
+            <style>
+              body { 
+                font-family: Arial, sans-serif; 
+                text-align: center; 
+                padding: 20px;
+                background: #f5f5f5;
+              }
+              .container {
+                background: white;
+                padding: 30px;
+                border-radius: 10px;
+                box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+                display: inline-block;
+              }
+              .qr-code {
+                border: 2px solid #dc2626;
+                border-radius: 10px;
+                padding: 10px;
+                background: white;
+              }
+              .url {
+                font-size: 12px;
+                color: #666;
+                margin-top: 15px;
+                word-break: break-all;
+                max-width: 400px;
+              }
+            </style>
+          </head>
+          <body>
+            <div class="container">
+              <h2 style="color: #dc2626; margin-bottom: 20px;">${session.title}</h2>
+              <p style="margin-bottom: 20px;">Scan this QR code to access the feedback form</p>
+              <div class="qr-code">
+                <img src="${qrUrl}" alt="QR Code" style="display: block;" />
+              </div>
+              <div class="url">${shareUrl}</div>
+              <button onclick="window.print()" style="
+                background: #dc2626; 
+                color: white; 
+                border: none; 
+                padding: 10px 20px; 
+                border-radius: 5px; 
+                margin-top: 20px;
+                cursor: pointer;
+              ">Print QR Code</button>
+            </div>
+          </body>
+        </html>
+      `);
+      newWindow.document.close();
+    }
   };
 
   const openPreview = () => {

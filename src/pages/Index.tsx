@@ -108,6 +108,11 @@ const Index = () => {
                 <p className="text-black text-sm">
                   Seamless feedback collection across Pune, Hyderabad, and Noida locations
                 </p>
+                <div className="mt-3 text-xs text-gray-600">
+                  <p><strong>Support Contact:</strong></p>
+                  <p>📞 +91 9014847505</p>
+                  <p>📧 guru.saicharanyarra@nxtwave.co.in</p>
+                </div>
               </div>
               <div className="text-center">
                 <div className="bg-red-100 rounded-full w-16 h-16 flex items-center justify-center mx-auto mb-4">
