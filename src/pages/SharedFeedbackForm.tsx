@@ -10,6 +10,8 @@ import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
 import { CheckCircle, ArrowLeft } from 'lucide-react';
 import { Link } from 'react-router-dom';
+import ThemeToggle from '@/components/ThemeToggle';
+
 const SharedFeedbackForm = () => {
   const { shareLink } = useParams();
   const navigate = useNavigate();
@@ -198,6 +200,7 @@ This form can be accessed at: ${window.location.origin}/feedback/${session.share
               <span>Back to Home</span>
             </Link>
             <div className="flex items-center space-x-3">
+              <ThemeToggle />
               <Button
                 onClick={downloadFormAsText}
                 variant="outline"

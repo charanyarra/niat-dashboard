@@ -4,7 +4,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { useToast } from '@/hooks/use-toast';
-import { Download, FileSpreadsheet } from 'lucide-react';
+import { Download, FileSpreadsheet, Calendar } from 'lucide-react';
 import { FeedbackSession, FeedbackResponse } from '@/hooks/useFeedbackData';
 
 interface EnhancedExportOptionsProps {
@@ -19,16 +19,7 @@ const EnhancedExportOptions = ({ sessions, responses, onExport }: EnhancedExport
   const [dateRange, setDateRange] = useState<string>('all');
   const { toast } = useToast();
 
-  const handleExport = () => {
-    if (!selectedSession) {
-      toast({
-        title: "No Session Selected",
-        description: "Please select a session to export.",
-        variant: "destructive"
-      });
-      return;
-    }
-
+  const handleBulkExport = () => {
     if (selectedSession === 'all') {
       sessions.forEach(session => {
         onExport(session.id, selectedFormat);
@@ -37,7 +28,7 @@ const EnhancedExportOptions = ({ sessions, responses, onExport }: EnhancedExport
         title: "Bulk Export Started",
         description: `Exporting all sessions as ${selectedFormat.toUpperCase()} files`,
       });
-    } else {
+    } else if (selectedSession) {
       onExport(selectedSession, selectedFormat);
       toast({
         title: "Export Started",
@@ -148,12 +139,12 @@ const EnhancedExportOptions = ({ sessions, responses, onExport }: EnhancedExport
 
         <div className="flex flex-col sm:flex-row gap-2">
           <Button 
-            onClick={handleExport}
+            onClick={handleBulkExport}
             className="flex-1 bg-gradient-to-r from-red-900 to-red-800 hover:from-red-800 hover:to-red-700"
             disabled={!selectedSession}
           >
             <Download className="h-4 w-4 mr-2" />
-            Export CSV
+            Export Selected
           </Button>
           
           <Button 
@@ -161,7 +152,7 @@ const EnhancedExportOptions = ({ sessions, responses, onExport }: EnhancedExport
             variant="outline"
             className="flex-1"
           >
-            <FileSpreadsheet className="h-4 w-4 mr-2" />
+            <Calendar className="h-4 w-4 mr-2" />
             Summary Report
           </Button>
         </div>
@@ -170,8 +161,9 @@ const EnhancedExportOptions = ({ sessions, responses, onExport }: EnhancedExport
           <p><strong>Export Features:</strong></p>
           <ul className="list-disc list-inside mt-1 space-y-1">
             <li>CSV format for spreadsheet compatibility</li>
-            <li>Individual session export with real data</li>
+            <li>Bulk export for multiple sessions</li>
             <li>Summary reports with analytics</li>
+            <li>Date range filtering</li>
             <li>Google Sheets integration ready</li>
           </ul>
         </div>

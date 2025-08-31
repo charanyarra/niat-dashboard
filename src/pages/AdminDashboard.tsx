@@ -6,7 +6,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useToast } from "@/hooks/use-toast";
 import { Link } from "react-router-dom";
-import { ArrowLeft, BarChart3, Download, Eye, Lock, Users, Edit, Trash2, Search, Filter, FileText, Plus, Share2, Database, Settings, TrendingUp, QrCode, ExternalLink, Copy, Mail, MessageCircle } from "lucide-react";
+import { ArrowLeft, BarChart3, Download, Eye, Lock, Users, Edit, Trash2, Search, Filter, FileText, Plus, Share2, Database, Settings, TrendingUp } from "lucide-react";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import {
   AlertDialog,
@@ -19,17 +19,11 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-} from "@/components/ui/dialog";
 import { useFeedbackData } from "@/hooks/useFeedbackData";
 import { useSessionManager } from "@/hooks/useSessionManager";
 import SessionEditor from "@/components/SessionEditor";
 import ShareableLinkManager from "@/components/ShareableLinkManager";
+import ThemeToggle from "@/components/ThemeToggle";
 import Analytics from "@/components/Analytics";
 import DataManagementHub from "@/components/DataManagementHub";
 import AdvancedDataHub from "@/components/AdvancedDataHub";
@@ -37,6 +31,7 @@ import PowerBIIntegration from "@/components/PowerBIIntegration";
 import ProfessionalQRCode from "@/components/ProfessionalQRCode";
 import AdminSettings from "@/components/AdminSettings";
 import AdvancedSettings from "@/components/AdvancedSettings";
+import { downloadSampleCSV } from "@/utils/sampleData";
 
 // All available form names
 const ALL_FORM_NAMES = [
@@ -403,11 +398,14 @@ const AdminDashboard = () => {
                 <ArrowLeft className="h-4 w-4 mr-2" />
                 Back to Dashboard
               </Button>
-              <img 
-                src="/lovable-uploads/8b444953-4cf5-4245-a883-10795b1e23c3.png" 
-                alt="NIAT Logo" 
-                className="h-8 w-auto"
-              />
+              <div className="flex items-center space-x-3">
+                <ThemeToggle />
+                <img 
+                  src="/lovable-uploads/8b444953-4cf5-4245-a883-10795b1e23c3.png" 
+                  alt="NIAT Logo" 
+                  className="h-8 w-auto"
+                />
+              </div>
             </div>
           </div>
         </div>
@@ -483,6 +481,9 @@ const AdminDashboard = () => {
               >
                 Logout
               </Button>
+            </div>
+            <div className="flex items-center space-x-3">
+              <ThemeToggle />
             </div>
           </div>
         </div>
@@ -566,6 +567,20 @@ const AdminDashboard = () => {
                       <Plus className="h-4 w-4 mr-2" />
                       New Session
                     </Button>
+                    <Button 
+                      onClick={() => {
+                        downloadSampleCSV();
+                        toast({
+                          title: "Sample CSV Downloaded",
+                          description: "Sample feedback responses with Indian names downloaded successfully.",
+                        });
+                      }}
+                      className="bg-blue-600 hover:bg-blue-700 text-white"
+                    >
+                      <Download className="h-4 w-4 mr-2" />
+                      Download Sample CSV
+                    </Button>
+                    <ThemeToggle />
                     <Button 
                       onClick={handleBulkExport}
                       className="bg-red-900 hover:bg-red-800 text-white"
@@ -726,279 +741,6 @@ const AdminDashboard = () => {
                 </div>
               </CardContent>
             </Card>
-
-            {/* View Session Dialog */}
-            <Dialog open={viewingSession !== null} onOpenChange={() => setViewingSession(null)}>
-              <DialogContent className="max-w-6xl max-h-[90vh] overflow-y-auto">
-                <DialogHeader>
-                  <DialogTitle className="flex items-center space-x-2">
-                    <Eye className="h-5 w-5" />
-                    <span>View Session: {viewingSession?.title}</span>
-                  </DialogTitle>
-                  <DialogDescription>
-                    Real-time view of responses and session details
-                  </DialogDescription>
-                </DialogHeader>
-                
-                {viewingSession && (
-                  <div className="space-y-6">
-                    {/* Session Info */}
-                    <Card>
-                      <CardHeader>
-                        <CardTitle>Session Information</CardTitle>
-                      </CardHeader>
-                      <CardContent>
-                        <div className="grid grid-cols-2 gap-4">
-                          <div>
-                            <p className="text-sm font-medium text-muted-foreground">Title</p>
-                            <p className="text-lg font-semibold">{viewingSession.title}</p>
-                          </div>
-                          <div>
-                            <p className="text-sm font-medium text-muted-foreground">Status</p>
-                            <span className={`px-2 py-1 rounded-full text-xs font-medium ${
-                              viewingSession.is_active 
-                                ? 'bg-green-100 text-green-800' 
-                                : 'bg-gray-100 text-gray-800'
-                            }`}>
-                              {viewingSession.is_active ? 'Active' : 'Inactive'}
-                            </span>
-                          </div>
-                          <div>
-                            <p className="text-sm font-medium text-muted-foreground">Questions</p>
-                            <p>{viewingSession.questions.length}</p>
-                          </div>
-                          <div>
-                            <p className="text-sm font-medium text-muted-foreground">Total Responses</p>
-                            <p className="text-lg font-semibold text-green-600">
-                              {getResponseCount(viewingSession.id)}
-                            </p>
-                          </div>
-                          <div className="col-span-2">
-                            <p className="text-sm font-medium text-muted-foreground">Description</p>
-                            <p>{viewingSession.description || 'No description'}</p>
-                          </div>
-                        </div>
-                      </CardContent>
-                    </Card>
-
-                    {/* Questions */}
-                    <Card>
-                      <CardHeader>
-                        <CardTitle>Questions</CardTitle>
-                      </CardHeader>
-                      <CardContent>
-                        <div className="space-y-3">
-                          {viewingSession.questions.map((question: any, index: number) => (
-                            <div key={question.id || index} className="border-l-4 border-red-200 pl-4">
-                              <p className="font-medium">
-                                {index + 1}. {question.question}
-                              </p>
-                              <p className="text-sm text-muted-foreground">
-                                Type: {question.type} {question.required && '(Required)'}
-                              </p>
-                            </div>
-                          ))}
-                        </div>
-                      </CardContent>
-                    </Card>
-
-                    {/* Live Responses */}
-                    <Card>
-                      <CardHeader>
-                        <CardTitle className="flex items-center space-x-2">
-                          <span>Live Responses</span>
-                          <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
-                        </CardTitle>
-                        <CardDescription>
-                          Real-time responses (updates automatically)
-                        </CardDescription>
-                      </CardHeader>
-                      <CardContent>
-                        {responses.filter(r => r.session_id === viewingSession.id).length === 0 ? (
-                          <div className="text-center py-8 text-muted-foreground">
-                            <Users className="h-12 w-12 mx-auto mb-4 opacity-50" />
-                            <p>No responses yet. Waiting for participants...</p>
-                          </div>
-                        ) : (
-                          <div className="space-y-4">
-                            {responses
-                              .filter(r => r.session_id === viewingSession.id)
-                              .slice(0, 10) // Show last 10 responses
-                              .map((response) => (
-                                <div key={response.id} className="border rounded-lg p-4 bg-gray-50">
-                                  <div className="flex justify-between items-start mb-3">
-                                    <div>
-                                      <p className="font-medium">{response.user_name}</p>
-                                      <p className="text-sm text-muted-foreground">{response.user_email}</p>
-                                      <p className="text-sm text-muted-foreground">ID: {response.bootcamp_id}</p>
-                                    </div>
-                                    <p className="text-sm text-muted-foreground">
-                                      {new Date(response.submitted_at).toLocaleString()}
-                                    </p>
-                                  </div>
-                                  <div className="space-y-2">
-                                    {viewingSession.questions.map((question: any, qIndex: number) => {
-                                      const answer = response.responses[question.id] || response.responses[question.question];
-                                      return (
-                                        <div key={question.id || qIndex} className="text-sm">
-                                          <span className="font-medium">{question.question}: </span>
-                                          <span className="text-muted-foreground">
-                                            {answer || 'No answer'}
-                                          </span>
-                                        </div>
-                                      );
-                                    })}
-                                  </div>
-                                </div>
-                              ))}
-                            
-                            {responses.filter(r => r.session_id === viewingSession.id).length > 10 && (
-                              <div className="text-center">
-                                <p className="text-sm text-muted-foreground">
-                                  Showing latest 10 responses. Export CSV for full data.
-                                </p>
-                                <Button 
-                                  onClick={() => handleExport(viewingSession.id, 'CSV')}
-                                  variant="outline"
-                                  size="sm"
-                                  className="mt-2"
-                                >
-                                  <Download className="h-4 w-4 mr-2" />
-                                  Export All Responses
-                                </Button>
-                              </div>
-                            )}
-                          </div>
-                        )}
-                      </CardContent>
-                    </Card>
-                  </div>
-                )}
-              </DialogContent>
-            </Dialog>
-
-            {/* Share Dialog */}
-            <Dialog open={showShareManager !== null} onOpenChange={() => setShowShareManager(null)}>
-              <DialogContent className="max-w-4xl">
-                <DialogHeader>
-                  <DialogTitle>Share Session: {showShareManager?.title}</DialogTitle>
-                  <DialogDescription>
-                    Share this feedback session with students and manage access options.
-                  </DialogDescription>
-                </DialogHeader>
-                <div className="space-y-6">
-                  {showShareManager && <ShareableLinkManager session={showShareManager} />}
-                  
-                  {/* Additional Sharing Options */}
-                  {showShareManager && (
-                    <Card>
-                      <CardHeader>
-                        <CardTitle className="flex items-center space-x-2">
-                          <MessageCircle className="h-5 w-5" />
-                          <span>Additional Share Options</span>
-                        </CardTitle>
-                        <CardDescription>
-                          More ways to share this feedback session
-                        </CardDescription>
-                      </CardHeader>
-                      <CardContent className="space-y-4">
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                          <Button
-                            variant="outline"
-                            className="flex items-center space-x-2 h-auto p-4"
-                            onClick={() => {
-                              const shareUrl = `${window.location.origin}/feedback/${showShareManager.share_link}`;
-                              const emailSubject = encodeURIComponent(`Feedback Request: ${showShareManager.title}`);
-                              const emailBody = encodeURIComponent(`Hi,\n\nPlease provide your feedback for "${showShareManager.title}" using the following link:\n\n${shareUrl}\n\nThank you!`);
-                              window.open(`mailto:?subject=${emailSubject}&body=${emailBody}`, '_blank');
-                            }}
-                          >
-                            <Mail className="h-5 w-5" />
-                            <div className="text-left">
-                              <div className="font-medium">Email Link</div>
-                              <div className="text-sm text-muted-foreground">Send via email</div>
-                            </div>
-                          </Button>
-                          
-                          <Button
-                            variant="outline"
-                            className="flex items-center space-x-2 h-auto p-4"
-                            onClick={() => {
-                              const shareUrl = `${window.location.origin}/feedback/${showShareManager.share_link}`;
-                              const whatsappText = encodeURIComponent(`Please provide your feedback for "${showShareManager.title}" using this link: ${shareUrl}`);
-                              window.open(`https://wa.me/?text=${whatsappText}`, '_blank');
-                            }}
-                          >
-                            <MessageCircle className="h-5 w-5" />
-                            <div className="text-left">
-                              <div className="font-medium">WhatsApp</div>
-                              <div className="text-sm text-muted-foreground">Share via WhatsApp</div>
-                            </div>
-                          </Button>
-                          
-                          <Button
-                            variant="outline"
-                            className="flex items-center space-x-2 h-auto p-4"
-                            onClick={() => {
-                              const shareUrl = `${window.location.origin}/feedback/${showShareManager.share_link}`;
-                              const qrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=${encodeURIComponent(shareUrl)}`;
-                              const printWindow = window.open('', '_blank');
-                              printWindow?.document.write(`
-                                <html>
-                                  <head><title>QR Code - ${showShareManager.title}</title></head>
-                                  <body style="text-align: center; font-family: Arial;">
-                                    <h2>${showShareManager.title}</h2>
-                                    <p>Scan this QR code to access the feedback form</p>
-                                    <img src="${qrUrl}" alt="QR Code" />
-                                    <p style="font-size: 12px; margin-top: 20px;">${shareUrl}</p>
-                                  </body>
-                                </html>
-                              `);
-                              printWindow?.document.close();
-                              printWindow?.print();
-                            }}
-                          >
-                            <QrCode className="h-5 w-5" />
-                            <div className="text-left">
-                              <div className="font-medium">Print QR Code</div>
-                              <div className="text-sm text-muted-foreground">Generate printable QR</div>
-                            </div>
-                          </Button>
-                          
-                          <Button
-                            variant="outline"
-                            className="flex items-center space-x-2 h-auto p-4"
-                            onClick={() => {
-                              const shareUrl = `${window.location.origin}/feedback/${showShareManager.share_link}`;
-                              if (navigator.share) {
-                                navigator.share({
-                                  title: `Feedback: ${showShareManager.title}`,
-                                  text: `Please provide your feedback for "${showShareManager.title}"`,
-                                  url: shareUrl,
-                                });
-                              } else {
-                                // Fallback for browsers that don't support Web Share API
-                                navigator.clipboard.writeText(shareUrl);
-                                toast({
-                                  title: "Link Copied",
-                                  description: "Share link copied to clipboard",
-                                });
-                              }
-                            }}
-                          >
-                            <Share2 className="h-5 w-5" />
-                            <div className="text-left">
-                              <div className="font-medium">Share</div>
-                              <div className="text-sm text-muted-foreground">Use device share menu</div>
-                            </div>
-                          </Button>
-                        </div>
-                      </CardContent>
-                    </Card>
-                  )}
-                </div>
-              </DialogContent>
-            </Dialog>
 
           </>
         ) : currentView === 'settings' ? (

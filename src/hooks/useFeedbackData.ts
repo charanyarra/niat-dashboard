@@ -195,57 +195,6 @@ export const useFeedbackData = () => {
     };
 
     loadData();
-
-    // Set up real-time subscriptions
-    const responsesChannel = supabase
-      .channel('feedback_responses_changes')
-      .on(
-        'postgres_changes',
-        {
-          event: 'INSERT',
-          schema: 'public',
-          table: 'feedback_responses'
-        },
-        (payload) => {
-          console.log('New response received:', payload);
-          // Refresh responses when new data comes in
-          fetchResponses();
-        }
-      )
-      .on(
-        'postgres_changes',
-        {
-          event: 'UPDATE',
-          schema: 'public',
-          table: 'feedback_responses'
-        },
-        (payload) => {
-          console.log('Response updated:', payload);
-          fetchResponses();
-        }
-      )
-      .subscribe();
-
-    const sessionsChannel = supabase
-      .channel('feedback_sessions_changes')
-      .on(
-        'postgres_changes',
-        {
-          event: '*',
-          schema: 'public',
-          table: 'feedback_sessions'
-        },
-        (payload) => {
-          console.log('Sessions changed:', payload);
-          fetchSessions();
-        }
-      )
-      .subscribe();
-
-    return () => {
-      supabase.removeChannel(responsesChannel);
-      supabase.removeChannel(sessionsChannel);
-    };
   }, []);
 
   return {
