@@ -1,14 +1,21 @@
+
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { MessageSquare, Users } from "lucide-react";
+
 const Index = () => {
-  return <div className="min-h-screen bg-gray-50">
+  return (
+    <div className="min-h-screen bg-gray-50">
       {/* Header */}
       <div className="bg-gradient-to-r from-red-900 to-red-800 text-white py-8">
         <div className="container mx-auto px-4">
           <div className="flex items-center justify-center space-x-4">
-            <img src="/lovable-uploads/8b444953-4cf5-4245-a883-10795b1e23c3.png" alt="NIAT Logo" className="h-16 w-auto" />
+            <img 
+              src="/lovable-uploads/8b444953-4cf5-4245-a883-10795b1e23c3.png" 
+              alt="NIAT Logo" 
+              className="h-16 w-auto"
+            />
           </div>
         </div>
       </div>
@@ -101,11 +108,6 @@ const Index = () => {
                 <p className="text-black text-sm">
                   Seamless feedback collection across Pune, Hyderabad, and Noida locations
                 </p>
-                <div className="mt-3 text-xs text-gray-600">
-                  <p className="mx-[10px] my-[10px]"><strong>Support Contact:</strong></p>
-                  <p>📞 +91 9014847505</p>
-                  <p>📧 guru.saicharanyarra@nxtwave.co.in</p>
-                </div>
               </div>
               <div className="text-center">
                 <div className="bg-red-100 rounded-full w-16 h-16 flex items-center justify-center mx-auto mb-4">
@@ -120,6 +122,8 @@ const Index = () => {
           </div>
         </div>
       </div>
-    </div>;
+    </div>
+  );
 };
+
 export default Index;

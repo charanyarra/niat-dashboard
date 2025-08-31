@@ -20,7 +20,7 @@ const ProfessionalQRCode = ({ url, title, sessionId }: ProfessionalQRCodeProps) 
 
   const generateProfessionalQR = () => {
     // Create a professional QR code with branding
-    const qrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=${encodeURIComponent(url)}&format=svg&bgcolor=ffffff&color=dc2626&qzone=2`;
+    const qrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=${encodeURIComponent(url)}&format=svg&bgcolor=ffffff&color=dc2626&qzone=2&logo=https://via.placeholder.com/50x50/dc2626/ffffff?text=NIAT`;
     setQrCodeSvg(qrUrl);
   };
 
@@ -30,39 +30,24 @@ const ProfessionalQRCode = ({ url, title, sessionId }: ProfessionalQRCodeProps) 
     
     switch (format) {
       case 'png':
-        downloadUrl = `https://api.qrserver.com/v1/create-qr-code/?size=800x800&data=${encodeURIComponent(url)}&format=png&bgcolor=ffffff&color=dc2626&qzone=2`;
+        downloadUrl = `https://api.qrserver.com/v1/create-qr-code/?size=1000x1000&data=${encodeURIComponent(url)}&format=png&bgcolor=ffffff&color=dc2626&qzone=2`;
         break;
       case 'svg':
-        downloadUrl = `https://api.qrserver.com/v1/create-qr-code/?size=800x800&data=${encodeURIComponent(url)}&format=svg&bgcolor=ffffff&color=dc2626&qzone=2`;
+        downloadUrl = `https://api.qrserver.com/v1/create-qr-code/?size=1000x1000&data=${encodeURIComponent(url)}&format=svg&bgcolor=ffffff&color=dc2626&qzone=2`;
         break;
       case 'pdf':
         // For PDF, we'll use PNG and let the browser convert
-        downloadUrl = `https://api.qrserver.com/v1/create-qr-code/?size=800x800&data=${encodeURIComponent(url)}&format=png&bgcolor=ffffff&color=dc2626&qzone=2`;
+        downloadUrl = `https://api.qrserver.com/v1/create-qr-code/?size=1000x1000&data=${encodeURIComponent(url)}&format=png&bgcolor=ffffff&color=dc2626&qzone=2`;
         filename = `${title.replace(/\s+/g, '_')}_QR.png`;
         break;
     }
 
-    // Create a temporary link to download the QR code
-    fetch(downloadUrl)
-      .then(response => response.blob())
-      .then(blob => {
-        const url = window.URL.createObjectURL(blob);
-        const link = document.createElement('a');
-        link.href = url;
-        link.download = filename;
-        document.body.appendChild(link);
-        link.click();
-        document.body.removeChild(link);
-        window.URL.revokeObjectURL(url);
-      })
-      .catch(error => {
-        console.error('Error downloading QR code:', error);
-        toast({
-          title: "Download Failed",
-          description: "Failed to download QR code. Please try again.",
-          variant: "destructive"
-        });
-      });
+    const link = document.createElement('a');
+    link.href = downloadUrl;
+    link.download = filename;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
 
     toast({
       title: "QR Code Downloaded",
@@ -81,22 +66,11 @@ const ProfessionalQRCode = ({ url, title, sessionId }: ProfessionalQRCodeProps) 
       <CardContent className="space-y-4">
         <div className="bg-white p-6 rounded-lg border-2 border-red-100 flex items-center justify-center">
           {qrCodeSvg ? (
-            <div className="text-center">
-              <img 
-                src={qrCodeSvg} 
-                alt={`QR Code for ${title}`}
-                className="w-64 h-64 mx-auto"
-                onError={() => {
-                  console.error('QR Code failed to load');
-                  toast({
-                    title: "QR Code Error",
-                    description: "Failed to generate QR code. Please check the URL.",
-                    variant: "destructive"
-                  });
-                }}
-              />
-              <p className="text-xs text-gray-500 mt-2 break-all">{url}</p>
-            </div>
+            <img 
+              src={qrCodeSvg} 
+              alt={`QR Code for ${title}`}
+              className="w-64 h-64"
+            />
           ) : (
             <div className="w-64 h-64 bg-gray-100 rounded-lg flex items-center justify-center">
               <span className="text-gray-500">Loading QR Code...</span>

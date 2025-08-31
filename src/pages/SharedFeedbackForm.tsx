@@ -10,10 +10,6 @@ import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
 import { CheckCircle, ArrowLeft } from 'lucide-react';
 import { Link } from 'react-router-dom';
-
-// Prevent access to other parts of the website when using shared link
-const RESTRICTED_MODE = true;
-
 const SharedFeedbackForm = () => {
   const { shareLink } = useParams();
   const navigate = useNavigate();
@@ -25,8 +21,7 @@ const SharedFeedbackForm = () => {
   const [userInfo, setUserInfo] = useState({
     name: '',
     email: '',
-    bootcampId: '',
-    location: ''
+    bootcampId: ''
   });
 
   useEffect(() => {
@@ -106,9 +101,6 @@ This form can be accessed at: ${window.location.origin}/feedback/${session.share
           responses[question.id] = value;
         }
       });
-
-      // Add location to responses
-      responses.location = userInfo.location;
 
       // Submit to database
       const { error } = await supabase
@@ -201,17 +193,10 @@ This form can be accessed at: ${window.location.origin}/feedback/${session.share
       <div className="bg-gradient-to-r from-red-900 to-red-800 text-white py-6">
         <div className="container mx-auto px-4">
           <div className="flex items-center justify-between">
-            {!RESTRICTED_MODE && (
-              <Link to="/" className="flex items-center space-x-2 hover:text-red-200 transition-colors">
-                <ArrowLeft className="h-5 w-5" />
-                <span>Back to Home</span>
-              </Link>
-            )}
-            {RESTRICTED_MODE && (
-              <div className="flex items-center space-x-2">
-                <span className="text-red-100">Feedback Form</span>
-              </div>
-            )}
+            <Link to="/" className="flex items-center space-x-2 hover:text-red-200 transition-colors">
+              <ArrowLeft className="h-5 w-5" />
+              <span>Back to Home</span>
+            </Link>
             <div className="flex items-center space-x-3">
               <Button
                 onClick={downloadFormAsText}
@@ -285,36 +270,6 @@ This form can be accessed at: ${window.location.origin}/feedback/${session.share
                   </div>
                 </div>
 
-                {/* Location Selection */}
-                <div className="space-y-3">
-                  <Label className="text-foreground font-semibold">
-                    Select Your Location <span className="text-red-500">*</span>
-                  </Label>
-                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                    {['Pune', 'Hyderabad', 'Noida'].map((location) => (
-                      <div key={location} className="flex items-center space-x-2 p-3 border rounded-lg hover:bg-muted">
-                        <input
-                          type="radio"
-                          id={`location-${location}`}
-                          name="location"
-                          value={location}
-                          checked={userInfo.location === location}
-                          onChange={(e) => setUserInfo({...userInfo, location: e.target.value})}
-                          required
-                        />
-                        <Label htmlFor={`location-${location}`} className="flex-1 cursor-pointer">
-                          {location}
-                        </Label>
-                      </div>
-                    ))}
-                  </div>
-                  <div className="text-sm text-muted-foreground">
-                    <p><strong>Contact Support:</strong></p>
-                    <p>📞 Phone: +91 9014847505</p>
-                    <p>📧 Email: guru.saicharanyarra@nxtwave.co.in</p>
-                  </div>
-                </div>
-
                 {/* Dynamic Questions */}
                 {session.questions.map((question: any, index: number) => (
                   <div key={question.id} className="space-y-3">
@@ -369,7 +324,7 @@ This form can be accessed at: ${window.location.origin}/feedback/${session.share
                 
                 <Button 
                   type="submit" 
-                  disabled={submitting || !userInfo.name || !userInfo.email || !userInfo.bootcampId || !userInfo.location}
+                  disabled={submitting || !userInfo.name || !userInfo.email || !userInfo.bootcampId}
                   className="w-full bg-gradient-to-r from-red-900 to-red-800 hover:from-red-800 hover:to-red-700 text-white font-semibold py-3 rounded-lg transition-all duration-300 transform hover:scale-105"
                 >
                   {submitting ? 'Submitting...' : 'Submit Feedback'}

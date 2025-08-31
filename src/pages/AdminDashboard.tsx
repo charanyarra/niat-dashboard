@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -941,73 +942,20 @@ const AdminDashboard = () => {
                             onClick={() => {
                               const shareUrl = `${window.location.origin}/feedback/${showShareManager.share_link}`;
                               const qrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=${encodeURIComponent(shareUrl)}`;
-                              const newWindow = window.open('', '_blank');
-                              if (newWindow) {
-                                newWindow.document.write(`
-                                  <html>
-                                    <head>
-                                      <title>QR Code - ${showShareManager.title}</title>
-                                      <style>
-                                        body { 
-                                          font-family: Arial, sans-serif; 
-                                          text-align: center; 
-                                          padding: 20px;
-                                          background: #f5f5f5;
-                                        }
-                                        .container {
-                                          background: white;
-                                          padding: 30px;
-                                          border-radius: 10px;
-                                          box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-                                          display: inline-block;
-                                          max-width: 500px;
-                                        }
-                                        .qr-code {
-                                          border: 2px solid #dc2626;
-                                          border-radius: 10px;
-                                          padding: 15px;
-                                          background: white;
-                                          margin: 20px 0;
-                                        }
-                                        .contact-info {
-                                          background: #f8f9fa;
-                                          padding: 15px;
-                                          border-radius: 8px;
-                                          margin-top: 20px;
-                                          text-align: left;
-                                        }
-                                      </style>
-                                    </head>
-                                    <body>
-                                      <div class="container">
-                                        <h2 style="color: #dc2626; margin-bottom: 10px;">${showShareManager.title}</h2>
-                                        <p style="margin-bottom: 20px;">Scan this QR code to access the feedback form</p>
-                                        <div class="qr-code">
-                                          <img src="${qrUrl}" alt="QR Code" style="display: block; max-width: 300px;" />
-                                        </div>
-                                        <p style="font-size: 12px; color: #666; word-break: break-all;">${shareUrl}</p>
-                                        <div class="contact-info">
-                                          <h4 style="margin: 0 0 10px 0; color: #333;">Support Contact:</h4>
-                                          <p style="margin: 5px 0;">📞 Phone: +91 9014847505</p>
-                                          <p style="margin: 5px 0;">📧 Email: guru.saicharanyarra@nxtwave.co.in</p>
-                                          <p style="margin: 5px 0;">🏢 Locations: Pune, Hyderabad, Noida</p>
-                                        </div>
-                                        <button onclick="window.print()" style="
-                                          background: #dc2626; 
-                                          color: white; 
-                                          border: none; 
-                                          padding: 12px 24px; 
-                                          border-radius: 6px; 
-                                          margin-top: 20px;
-                                          cursor: pointer;
-                                          font-size: 14px;
-                                        ">Print QR Code</button>
-                                      </div>
-                                    </body>
-                                  </html>
-                                `);
-                                newWindow.document.close();
-                              }
+                              const printWindow = window.open('', '_blank');
+                              printWindow?.document.write(`
+                                <html>
+                                  <head><title>QR Code - ${showShareManager.title}</title></head>
+                                  <body style="text-align: center; font-family: Arial;">
+                                    <h2>${showShareManager.title}</h2>
+                                    <p>Scan this QR code to access the feedback form</p>
+                                    <img src="${qrUrl}" alt="QR Code" />
+                                    <p style="font-size: 12px; margin-top: 20px;">${shareUrl}</p>
+                                  </body>
+                                </html>
+                              `);
+                              printWindow?.document.close();
+                              printWindow?.print();
                             }}
                           >
                             <QrCode className="h-5 w-5" />
